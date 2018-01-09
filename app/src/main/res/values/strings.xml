@@ -17,4 +17,10 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="checkBocxStudent_login_form_text">Student</string>
+    <string name="checkBoxTeacher_login_form_text">Teacher</string>
+    <string name="checkBoxAdmin_login_form_text">Librarian</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
