@@ -1,5 +1,6 @@
 package com.example.coltonjacobson.fblamobapp;
 
+import android.app.DownloadManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -7,9 +8,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class mainActivity extends AppCompatActivity {
 
+    RequestQueue rq;
+    TextView mDBAttempt;
     private TextView mTextMessage;
+    String message;
+    String url = "http://lizardswimmer.azurewebsites.net/simple/books";
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -40,7 +55,39 @@ public class mainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        final TextView mTextView = (TextView) findViewById(R.id.text);
+        rq = Volley.newRequestQueue(this);
+        mDBAttempt = (TextView) findViewById(R.id.dbAttempt);
+
+        sendJsonRequest();
+
+    }
+
+    public void sendJsonRequest() {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+                try {
+
+                    message = response.getString("Book");
+                    mDBAttempt.setText(message);
+
+                } catch(JSONException e){
+
+                    e.printStackTrace();
+
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        rq.add(jsonObjectRequest);
+
 
     }
 }
