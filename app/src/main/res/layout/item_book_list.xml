@@ -15,6 +15,7 @@
         android:contentDescription="@string/book_image_content_description"
         />
     <TextView
+        android:id="@+id/BookName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/recycler_view_bookname"

@@ -1,6 +1,9 @@
 package com.example.coltonjacobson.fblamobapp;
 
 import android.app.DownloadManager;
+import android.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -58,6 +61,13 @@ public class mainActivity extends AppCompatActivity {
         mDBAttempt = (TextView) findViewById(R.id.dbAttempt);
 
         loadBookData();
+
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        booksRecyclerViewFragment fragment = new booksRecyclerViewFragment();
+        fragmentTransaction.add(R.id.recyclerViewContainer,fragment);
+
 
 
     }
