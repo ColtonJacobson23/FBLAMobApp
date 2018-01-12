@@ -23,7 +23,12 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class mainActivity extends AppCompatActivity {
+public class mainActivity extends BookListFragment{
+
+    @Override
+    protected Fragment createFragment() {
+        return new RecyclerViewFragment().newInstance();
+    }
 
     TextView mDBAttempt;
     private TextView mTextMessage;
@@ -50,6 +55,8 @@ public class mainActivity extends AppCompatActivity {
         }
     };
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,12 +68,11 @@ public class mainActivity extends AppCompatActivity {
         mDBAttempt = (TextView) findViewById(R.id.dbAttempt);
 
         loadBookData();
+        mTextMessage.setText("");
 
 
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        booksRecyclerViewFragment fragment = new booksRecyclerViewFragment();
-        fragmentTransaction.add(R.id.recyclerViewContainer,fragment);
+
+
 
 
 
@@ -79,6 +85,7 @@ public class mainActivity extends AppCompatActivity {
                 try {
 
                     mDBAttempt.setText(response);
+                    mDBAttempt.setText("");
                     JSONObject jsonObject = new JSONObject(response);
 
                 } catch(JSONException e) {
@@ -93,7 +100,7 @@ public class mainActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        mDBAttempt.setText("You Suck");
+                        mDBAttempt.setText(R.string.db_get_failed);
 
                     }
                 });
