@@ -1,5 +1,9 @@
 package com.example.coltonjacobson.fblamobapp;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,7 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.coltonjacobson.fblamobapp.bookData.Book;
+import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +36,11 @@ public class RecyclerViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragment,container,false);
 
-        List<String> bookNamesList = new ArrayList<>();
-        for (int i = 0; i < LibraryData.bookTitles.length;i++) {
-            bookNamesList.add(LibraryData.bookTitles[i]);
-        }
+        ArrayList<Book> books = BooksCollection.getBooks();
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new RecyclerViewAdapter(bookNamesList));
+        recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
 
 
         return view;
@@ -47,11 +53,13 @@ public class RecyclerViewFragment extends Fragment {
 
     }
 
-    private class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    private class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private CardView mCardview;
-        private TextView mTextView;
+        private TextView mBookName;
+        private TextView mAuthorName;
         private ImageView mImageView;
+        private ItemClickListener itemClickListener;
 
         public RecyclerViewHolder(View itemView) {
             super(itemView);
@@ -62,20 +70,39 @@ public class RecyclerViewFragment extends Fragment {
             super(layoutInflater.inflate(R.layout.card_view,container,false));
 
             mCardview = itemView.findViewById(R.id.card_view);
-            mTextView = itemView.findViewById(R.id.text_view);
+            mBookName = itemView.findViewById(R.id.text_view);
+            mAuthorName =itemView.findViewById(R.id.text_view2);
+            mImageView =itemView.findViewById(R.id.image_view);
+            itemView.setOnClickListener(this);
 
+
+        }
+
+        public void setItemClickListener(ItemClickListener itemClickListener) {
+
+            this.itemClickListener = itemClickListener;
+
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            itemClickListener.onClick(view,getAdapterPosition(),false);
 
         }
     }
 
     private class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder>{
 
-        private List<String> mBookNameList;
+        private Context cText;
+        private ArrayList<Book> books;
 
 
-        public RecyclerViewAdapter(List<String> list) {
+        public RecyclerViewAdapter(ArrayList<Book> books, Context context) {
 
-            this.mBookNameList = list;
+            this.books = books;
+            this.cText = context;
+
 
         }
 
@@ -88,17 +115,47 @@ public class RecyclerViewFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerViewHolder holder, int position) {
+            final String bookName = books.get(position).getName();
+            final int bookImage = books.get(position).getImage();
+            final String bookAuthor = books.get(position).getAuthor();
 
-            holder.mTextView.setText(mBookNameList.get(position));
+            holder.mBookName.setText(bookName);
+            holder.mImageView.setImageResource(bookImage);
+            holder.mAuthorName.setText(bookAuthor);
+
+            holder.setItemClickListener(new ItemClickListener() {
+                @Override
+                public void onClick(View view, int position, boolean isLongClick) {
+
+                    Toast.makeText(cText, "You clicked " + bookName,Toast.LENGTH_LONG).show();
+                    openBookDetailActivity(bookName,bookImage,bookAuthor);
 
 
+                }
+            });
 
         }
 
         @Override
         public int getItemCount() {
             //Five or more
-            return mBookNameList.size();
+            return books.size();
+        }
+
+        private void openBookDetailActivity(String bookName, int image,String bookAuthor) {
+
+            Intent intent = new Intent(cText, BookDetailActivity.class);
+
+            //Get data ready to send
+            intent.putExtra("BOOK_NAME", bookName);
+            intent.putExtra("BOOK_IMAGE", image);
+            intent.putExtra("BOOK_AUTHOR",bookAuthor);
+
+
+            //Start my activity
+
+            cText.startActivity(intent);
+
         }
     }
 }
