@@ -2,6 +2,7 @@ package com.example.coltonjacobson.fblamobapp;
 
 import android.app.DownloadManager;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -61,6 +62,8 @@ public class mainActivity extends BookListFragment{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent login = new Intent(mainActivity.this,LoginActivity.class);
+        startActivity(login);
 
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -108,4 +111,8 @@ public class mainActivity extends BookListFragment{
         requestQueue.add(stringRequest);
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
 }

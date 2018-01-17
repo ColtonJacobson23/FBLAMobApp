@@ -72,38 +72,6 @@
                 android:textStyle="bold" />
 
 
-            <RelativeLayout
-                android:id="@+id/checkBoxes_login_form"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <CheckBox
-                    android:id="@+id/checkBoxStudent_login_form"
-                    android:text="@string/checkBocxStudent_login_form_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@id/checkBoxTeacher_login_form"/>
-
-                <CheckBox
-                    android:id="@+id/checkBoxTeacher_login_form"
-                    android:text="@string/checkBoxTeacher_login_form_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@id/checkBoxAdmin_login_form"
-                    android:layout_toRightOf="@id/checkBoxStudent_login_form"/>
-
-                <CheckBox
-                    android:id="@+id/checkBoxAdmin_login_form"
-                    android:text="@string/checkBoxAdmin_login_form_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_toRightOf="@id/checkBoxTeacher_login_form"/>
-
-            </RelativeLayout>
         </LinearLayout>
 
     </ScrollView>
