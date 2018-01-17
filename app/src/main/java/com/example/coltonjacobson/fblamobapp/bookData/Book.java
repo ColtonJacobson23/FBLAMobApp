@@ -9,6 +9,25 @@ public class Book {
     String author;
     int image;
 
+    public boolean isReserved() {
+        return reserved;
+    }
+
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
+
+    public boolean isCheckedOut() {
+        return checkedOut;
+    }
+
+    public void setCheckedOut(boolean checkedOut) {
+        this.checkedOut = checkedOut;
+    }
+
+    boolean reserved;
+    boolean checkedOut;
+
     public Book() {
 
 

@@ -67,13 +67,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Checkout" />
+            android:text="Checkout"
+            android:onClick="onCheckoutClicked"/>
 
         <Button
             android:id="@+id/button_reserve"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Reserve" />
+            android:text="Reserve"
+            android:onClick="onReserveClicked"/>
     </LinearLayout>
 </RelativeLayout>

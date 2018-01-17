@@ -118,6 +118,8 @@ public class RecyclerViewFragment extends Fragment {
             final String bookName = books.get(position).getName();
             final int bookImage = books.get(position).getImage();
             final String bookAuthor = books.get(position).getAuthor();
+            final boolean isCheckedOut = books.get(position).isCheckedOut();
+            final boolean isReserved = books.get(position).isReserved();
 
             holder.mBookName.setText(bookName);
             holder.mImageView.setImageResource(bookImage);
@@ -128,7 +130,7 @@ public class RecyclerViewFragment extends Fragment {
                 public void onClick(View view, int position, boolean isLongClick) {
 
                     Toast.makeText(cText, "You clicked " + bookName,Toast.LENGTH_LONG).show();
-                    openBookDetailActivity(bookName,bookImage,bookAuthor);
+                    openBookDetailActivity(bookName,bookImage,bookAuthor,isCheckedOut,isReserved,position);
 
 
                 }
@@ -142,14 +144,17 @@ public class RecyclerViewFragment extends Fragment {
             return books.size();
         }
 
-        private void openBookDetailActivity(String bookName, int image,String bookAuthor) {
+        private void openBookDetailActivity(String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position) {
 
             Intent intent = new Intent(cText, BookDetailActivity.class);
 
             //Get data ready to send
             intent.putExtra("BOOK_NAME", bookName);
-            intent.putExtra("BOOK_IMAGE", image);
+            intent.putExtra("BOOK_IMAGE", image );
             intent.putExtra("BOOK_AUTHOR",bookAuthor);
+            intent.putExtra("BOOK_CHECKEDOUT",isCheckedOut);
+            intent.putExtra("BOOK_RESERVED",isReserved);
+            intent.putExtra("POSITION",position);
 
 
             //Start my activity

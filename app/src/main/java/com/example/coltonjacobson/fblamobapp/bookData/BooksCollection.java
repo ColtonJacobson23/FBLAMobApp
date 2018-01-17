@@ -19,6 +19,8 @@ public class BooksCollection {
         book.setAuthor("J.K Rowling");
         book.setName("Harry Potter and the Prisoner of Askaban");
         book.setImage(R.drawable.mockingjay_image);
+        book.setCheckedOut(true);
+        book.setReserved(false);
         books.add(book);
 
         //Christine
@@ -26,6 +28,8 @@ public class BooksCollection {
         book.setAuthor("Stephen King");
         book.setName("Christine");
         book.setImage(R.drawable.mockingjay_image);
+        book.setCheckedOut(false);
+        book.setReserved(true);
         books.add(book);
 
         //To Kill A Mockingbird
@@ -33,6 +37,8 @@ public class BooksCollection {
         book.setAuthor("Harper Lee");
         book.setName("To Kill a Mockingbird");
         book.setImage(R.drawable.mockingjay_image);
+        book.setCheckedOut(false);
+        book.setReserved(false);
         books.add(book);
 
         //Just a Little Christmas
@@ -40,6 +46,8 @@ public class BooksCollection {
         book.setAuthor("Janet Dailey");
         book.setName("Just a Little Christmas");
         book.setImage(R.drawable.mockingjay_image);
+        book.setCheckedOut(true);
+        book.setReserved(false);
         books.add(book);
 
         //Mockingjay
@@ -47,6 +55,8 @@ public class BooksCollection {
         book.setAuthor("Suzanne Collins");
         book.setName("Mockingjay");
         book.setImage(R.drawable.mockingjay_image);
+        book.setCheckedOut(false);
+        book.setReserved(true);
         books.add(book);
 
 
