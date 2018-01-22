@@ -1,13 +1,13 @@
 package com.example.coltonjacobson.fblamobapp;
 
 import android.app.DownloadManager;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
@@ -41,15 +41,22 @@ public class mainActivity extends BookListFragment{
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction fragmentTransaction =  fragmentManager.beginTransaction();
+
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_home);
+                    fragmentTransaction.replace(R.id.recyclerViewContainer,new RecyclerViewFragment()).commit();
                     return true;
                 case R.id.navigation_dashboard:
                     mTextMessage.setText(R.string.title_dashboard);
+                    fragmentTransaction.replace(R.id.recyclerViewContainer, new MapFragment()).commit();
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    mTextMessage.setText(R.string.title_profile);
+                    fragmentTransaction.replace(R.id.recyclerViewContainer,new ProfileFragment()).commit();
                     return true;
             }
             return false;
