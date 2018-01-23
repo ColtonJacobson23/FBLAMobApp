@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
+
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -42,21 +42,29 @@ public class mainActivity extends BookListFragment{
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction fragmentTransaction =  fragmentManager.beginTransaction();
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    fragmentTransaction.replace(R.id.recyclerViewContainer,new RecyclerViewFragment()).commit();
+                    RecyclerViewFragment fragment = new RecyclerViewFragment();
+                    android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.recyclerViewContainer,fragment,"FragmentName");
+                    fragmentTransaction.commit();
+
+                    setTitle("Home");
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    fragmentTransaction.replace(R.id.recyclerViewContainer, new MapFragment()).commit();
+                    setTitle("Library Map");
+                    RecyclerViewFragment fragment2 = new RecyclerViewFragment();
+                    android.support.v4.app.FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction2.replace(R.id.recyclerViewContainer,fragment2,"FragmentName");
+                    fragmentTransaction2.commit();
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_profile);
-                    fragmentTransaction.replace(R.id.recyclerViewContainer,new ProfileFragment()).commit();
+                    setTitle("My Profile");
+                    RecyclerViewFragment fragment3 = new RecyclerViewFragment();
+                    android.support.v4.app.FragmentTransaction fragmentTransaction3 = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction3.replace(R.id.recyclerViewContainer,fragment3,"FragmentName");
+                    fragmentTransaction3.commit();
                     return true;
             }
             return false;
@@ -87,6 +95,16 @@ public class mainActivity extends BookListFragment{
 
 
     }
+
+    private boolean loadFragment(Fragment fragment)  {
+
+        if(fragment != null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.recyclerViewContainer,fragment).commit();
+            return true;
+        }
+        return false;
+    }
+
     private void loadBookData() {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
