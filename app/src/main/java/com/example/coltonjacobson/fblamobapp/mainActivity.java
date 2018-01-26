@@ -2,6 +2,8 @@ package com.example.coltonjacobson.fblamobapp;
 
 import android.app.DownloadManager;
 import android.content.Intent;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -24,7 +26,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class mainActivity extends BookListFragment{
+public class mainActivity extends BookListFragment implements MapFragment.OnFragmentInteractionListener,
+        ProfileFragment.OnFragmentInteractionListener {
 
     @Override
     protected Fragment createFragment() {
@@ -46,7 +49,8 @@ public class mainActivity extends BookListFragment{
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     RecyclerViewFragment fragment = new RecyclerViewFragment();
-                    android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    FragmentManager fragmentManager = getSupportFragmentManager();
+                    android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.recyclerViewContainer,fragment,"FragmentName");
                     fragmentTransaction.commit();
 
@@ -54,14 +58,14 @@ public class mainActivity extends BookListFragment{
                     return true;
                 case R.id.navigation_dashboard:
                     setTitle("Library Map");
-                    RecyclerViewFragment fragment2 = new RecyclerViewFragment();
+                    MapFragment fragment2 = new MapFragment();
                     android.support.v4.app.FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction2.replace(R.id.recyclerViewContainer,fragment2,"FragmentName");
                     fragmentTransaction2.commit();
                     return true;
                 case R.id.navigation_notifications:
                     setTitle("My Profile");
-                    RecyclerViewFragment fragment3 = new RecyclerViewFragment();
+                    ProfileFragment fragment3 = new ProfileFragment();
                     android.support.v4.app.FragmentTransaction fragmentTransaction3 = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction3.replace(R.id.recyclerViewContainer,fragment3,"FragmentName");
                     fragmentTransaction3.commit();
@@ -138,6 +142,11 @@ public class mainActivity extends BookListFragment{
 
     @Override
     public void onBackPressed() {
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }

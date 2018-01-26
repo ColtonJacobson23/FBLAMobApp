@@ -162,5 +162,7 @@ public class RecyclerViewFragment extends Fragment {
             cText.startActivity(intent);
 
         }
+
+
     }
 }
