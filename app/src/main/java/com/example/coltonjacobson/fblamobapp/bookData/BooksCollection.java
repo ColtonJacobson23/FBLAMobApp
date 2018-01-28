@@ -10,9 +10,13 @@ import java.util.ArrayList;
 
 public class BooksCollection {
 
+
     public static ArrayList<Book> getBooks() {
         ArrayList<Book> books = new ArrayList<Book>();
         Book book = null;
+        String url = "http://lizardswimmer.azurewebsites.net/simple/books";
+
+
 
         //Harry Potter
         book = new Book();

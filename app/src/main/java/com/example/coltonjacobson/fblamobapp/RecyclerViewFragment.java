@@ -18,8 +18,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.coltonjacobson.fblamobapp.bookData.Book;
 import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -31,21 +41,79 @@ import java.util.List;
 
 public class RecyclerViewFragment extends Fragment {
 
+    String url = "http://lizardswimmer.azurewebsites.net/simple/books";
+    JSONArray jsonArray;
+    ArrayList<String> Authors;
+    ArrayList<String> Titles;
+    ArrayList<String> ISBNs;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragment,container,false);
+
 
         ArrayList<Book> books = BooksCollection.getBooks();
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
+        loadBookData();
 
 
         return view;
 
     }
+
+//Simple request function to get all book objects from DB
+    private void loadBookData() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                try {
+
+
+                    jsonArray = new JSONArray(response);
+                    Authors = jsonToArraylist(jsonArray, "authors");
+                    Titles = jsonToArraylist(jsonArray,"title");
+                    ISBNs = jsonToArraylist(jsonArray,"ISBN");
+
+
+
+                } catch(JSONException e) {
+
+                    e.printStackTrace();
+
+                }
+
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
+    }
+
+    //To turn a JSON array into Arraylists of Book Data
+    public ArrayList<String> jsonToArraylist(JSONArray jArray, String name) throws JSONException {
+
+        JSONObject jObject = jArray.getJSONObject(0);
+        ArrayList<String> strings = new ArrayList<String>();
+        for (int i = 0; i < jArray.length();i++) {
+            jObject = jArray.getJSONObject(i);
+            strings.add(jObject.getString(name));
+        }
+        return strings;
+
+    }
+
 
     public static Fragment newInstance() {
 
@@ -95,13 +163,19 @@ public class RecyclerViewFragment extends Fragment {
     private class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder>{
 
         private Context cText;
+        private ArrayList<String> authors;
+        private ArrayList<String> titles;
+        private ArrayList<String> isbns;
         private ArrayList<Book> books;
 
 
         public RecyclerViewAdapter(ArrayList<Book> books, Context context) {
 
-            this.books = books;
+            this.authors = Authors;
+            this.titles = Titles;
+            this.isbns = ISBNs;
             this.cText = context;
+            this.books = books;
 
 
         }
@@ -115,13 +189,14 @@ public class RecyclerViewFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(RecyclerViewHolder holder, int position) {
-            final String bookName = books.get(position).getName();
+
+            final String bookTitle = books.get(position).getName();
             final int bookImage = books.get(position).getImage();
             final String bookAuthor = books.get(position).getAuthor();
             final boolean isCheckedOut = books.get(position).isCheckedOut();
             final boolean isReserved = books.get(position).isReserved();
 
-            holder.mBookName.setText(bookName);
+            holder.mBookName.setText(bookTitle);
             holder.mImageView.setImageResource(bookImage);
             holder.mAuthorName.setText(bookAuthor);
 
@@ -129,8 +204,8 @@ public class RecyclerViewFragment extends Fragment {
                 @Override
                 public void onClick(View view, int position, boolean isLongClick) {
 
-                    Toast.makeText(cText, "You clicked " + bookName,Toast.LENGTH_LONG).show();
-                    openBookDetailActivity(bookName,bookImage,bookAuthor,isCheckedOut,isReserved,position);
+                    Toast.makeText(cText, "You clicked " + bookTitle,Toast.LENGTH_LONG).show();
+                    openBookDetailActivity(bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position);
 
 
                 }

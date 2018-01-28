@@ -47,8 +47,8 @@ public class BookDetailActivity extends AppCompatActivity {
         String bookName = intent.getExtras().getString("BOOK_NAME");
         String bookAuthor = intent.getExtras().getString("BOOK_AUTHOR");
         int imageID = intent.getExtras().getInt("BOOK_IMAGE");
-        boolean isCheckedOut =intent.getExtras().getBoolean("BOOK_CHECKEDOUT");
-        boolean isReserved = intent.getExtras().getBoolean("BOOK_RESERVED");
+        boolean isCheckedOut = true; //intent.getExtras().getBoolean("BOOK_CHECKEDOUT");
+        boolean isReserved = true; //intent.getExtras().getBoolean("BOOK_RESERVED");
         position = intent.getExtras().getInt("POSITION");
 
 

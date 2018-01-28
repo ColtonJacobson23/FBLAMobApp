@@ -14,17 +14,21 @@ import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 public class mainActivity extends BookListFragment implements MapFragment.OnFragmentInteractionListener,
         ProfileFragment.OnFragmentInteractionListener {
@@ -53,6 +57,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                     android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.recyclerViewContainer,fragment,"FragmentName");
                     fragmentTransaction.commit();
+                    loadBookData();
 
                     setTitle("Home");
                     return true;
@@ -92,12 +97,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         loadBookData();
         mTextMessage.setText("");
 
-
-
-
-
-
-
     }
 
     private boolean loadFragment(Fragment fragment)  {
@@ -116,9 +115,11 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
                 try {
 
-                    mDBAttempt.setText(response);
-                    mDBAttempt.setText("");
-                    JSONObject jsonObject = new JSONObject(response);
+
+                    JSONArray jsonArray = new JSONArray(response);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    mDBAttempt.setText(jsonObject.getString("title"));
+                    setTitle(jsonObject.getString("title"));
 
                 } catch(JSONException e) {
 

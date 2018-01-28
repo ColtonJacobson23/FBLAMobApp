@@ -51,9 +51,7 @@ public class MapFragment extends Fragment {
         return fragment;
     }
 
-    public interface onMapSelectedListener {
-        pu
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
