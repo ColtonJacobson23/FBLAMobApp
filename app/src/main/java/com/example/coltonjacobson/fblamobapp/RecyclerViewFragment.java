@@ -93,7 +93,7 @@ public class RecyclerViewFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Couldn't retrieve data", Toast.LENGTH_SHORT).show();
 
                     }
                 });
