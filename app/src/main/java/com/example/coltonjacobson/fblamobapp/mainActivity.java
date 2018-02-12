@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,6 +29,10 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class mainActivity extends BookListFragment implements MapFragment.OnFragmentInteractionListener,
@@ -38,10 +43,11 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         return new RecyclerViewFragment().newInstance();
     }
 
-    TextView mDBAttempt;
+    boolean DBAttempt;
     private TextView mTextMessage;
-    String message;
-    String url = "http://lizardswimmer.azurewebsites.net/simple/books";
+    TextView mLoading;
+    String getURL = "http://lizardswimmer.azurewebsites.net/simple/books";
+    String postURL = "http://lizardswimmer.azurewebsites.net/login";
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -90,12 +96,15 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         startActivity(login);
 
         mTextMessage = (TextView) findViewById(R.id.message);
+        mLoading = (TextView) findViewById(R.id.loading_text_view);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mDBAttempt = (TextView) findViewById(R.id.dbAttempt);
 
         loadBookData();
         mTextMessage.setText("");
+        authenticate();
+
+
 
     }
 
@@ -109,7 +118,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     }
 
     private void loadBookData() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
@@ -118,7 +127,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
                     JSONArray jsonArray = new JSONArray(response);
                     JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    mDBAttempt.setText(jsonObject.getString("title"));
+                    DBAttempt = true;
                     setTitle(jsonObject.getString("title"));
 
                 } catch(JSONException e) {
@@ -133,7 +142,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        mDBAttempt.setText(R.string.db_get_failed);
+                        DBAttempt = false;
 
                     }
                 });
@@ -150,4 +159,66 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+    //Sends a push request to the database to authenticate the username and password
+    //Returns either a JSONObject with a token verifying the username and password, or returns an empty JSON Object
+    public JSONObject authenticate() {
+
+        //Stores the token value, if any
+        final JSONObject jResponse = new JSONObject();
+
+        //Storing username and password in JSONObject
+        final JSONObject info = new JSONObject();
+        try {
+            info.put("username", "1111111");
+            info.put("password", "password");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        RequestQueue rQueue = Volley.newRequestQueue(this);
+        //Posting the object containing the username and password
+        //If correct, a JWT token will be inserted into jResponse
+        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST,postURL,info,
+                new Response.Listener<JSONObject>()
+                {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response", response.toString());
+                        try {
+                            jResponse.put("token",response.get("token"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(mainActivity.this, "IT WORKED!", Toast.LENGTH_SHORT).show();
+
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("Error response", error.toString());
+                        Toast.makeText(mainActivity.this, "FAILURE", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        ) {
+            public Map<String,String> getParams()
+            {
+                Map<String,String> parameters = new HashMap<String,String>();
+                parameters.put("Content-Type", "application/json");
+                parameters.put("Accept", "application/json");
+                return parameters;
+            }
+
+        };
+        rQueue.add(postRequest);
+
+        //Returns the token, or the empty JSON
+        return jResponse;
+
+    }
+
+
 }

@@ -2,15 +2,12 @@ package com.example.coltonjacobson.fblamobapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,15 +28,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by colto on 1/12/2018.
  */
 
-public class RecyclerViewFragment extends Fragment {
+public class ProfileRecyclerViewFragment extends Fragment {
 
     String url = "http://lizardswimmer.azurewebsites.net/simple/books";
     JSONArray jsonArray;
@@ -59,8 +54,6 @@ public class RecyclerViewFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
         loadBookData();
-
-
 
 
         return view;
@@ -119,7 +112,7 @@ public class RecyclerViewFragment extends Fragment {
 
     public static Fragment newInstance() {
 
-        return new RecyclerViewFragment();
+        return new ProfileRecyclerViewFragment();
 
     }
 
