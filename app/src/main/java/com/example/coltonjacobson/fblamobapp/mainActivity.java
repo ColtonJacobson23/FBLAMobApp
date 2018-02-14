@@ -49,6 +49,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     String getURL = "http://lizardswimmer.azurewebsites.net/simple/books";
     String postURL = "http://lizardswimmer.azurewebsites.net/login";
 
+    //Changes the fragment displayed on the screen to the one associated with each button
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -57,6 +58,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
 
             switch (item.getItemId()) {
+
+                //Main fragment with RecyclerView
                 case R.id.navigation_home:
                     RecyclerViewFragment fragment = new RecyclerViewFragment();
                     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -67,6 +70,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
                     setTitle("Home");
                     return true;
+
+                //The Map fragment
                 case R.id.navigation_dashboard:
                     setTitle("Library Map");
                     MapFragment fragment2 = new MapFragment();
@@ -74,6 +79,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                     fragmentTransaction2.replace(R.id.recyclerViewContainer,fragment2,"FragmentName");
                     fragmentTransaction2.commit();
                     return true;
+
+                //The Profile fragment
                 case R.id.navigation_notifications:
                     setTitle("My Profile");
                     ProfileFragment fragment3 = new ProfileFragment();
