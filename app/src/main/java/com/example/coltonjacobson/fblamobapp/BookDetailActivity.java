@@ -2,11 +2,13 @@ package com.example.coltonjacobson.fblamobapp;
 
 import android.content.Intent;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +21,8 @@ import org.w3c.dom.Text;
  * Created by colto on 1/15/2018.
  */
 
-public class BookDetailActivity extends AppCompatActivity {
+public class BookDetailActivity extends AppCompatActivity implements MapFragment.OnFragmentInteractionListener {
+    FrameLayout mapContainer;
     TextView bookNameText;
     TextView bookAuthorText;
     ImageView bookImageView;
@@ -39,6 +42,15 @@ public class BookDetailActivity extends AppCompatActivity {
         bookImageView = findViewById(R.id.imageView);
         checkoutBtn = findViewById(R.id.button_checkOut);
         reserveBtn = findViewById(R.id.button_reserve);
+        mapContainer = findViewById(R.id.map_container);
+
+        MapFragment fragment = new MapFragment();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.map_container,fragment,"FragmentName");
+        fragmentTransaction.commit();
+
+
+
 
 
 
@@ -97,6 +109,11 @@ public class BookDetailActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }

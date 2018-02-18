@@ -1,13 +1,22 @@
 package com.example.coltonjacobson.fblamobapp.bookData;
 
+import java.util.ArrayList;
+
 /**
  * Created by colto on 1/15/2018.
  */
 
 public class Book {
-    String name;
-    String author;
-    int image;
+    private String title;
+    private ArrayList<String> authors;
+    private int ISBN;
+    private boolean reserved;
+    private boolean checkedOut;
+    private int pageCount;
+    private String base64Encoded;
+    private String ficID;
+    private String specialCollection;
+
 
     public boolean isReserved() {
         return reserved;
@@ -25,36 +34,39 @@ public class Book {
         this.checkedOut = checkedOut;
     }
 
-    boolean reserved;
-    boolean checkedOut;
-
-    public Book() {
 
 
-
+    public Book(String title, int pageCount, String base64Encoded, ArrayList<String> authors, int ISBN, boolean reserved,
+                boolean checkedOut, String ficID, String specialCollection) {
+        this.title = title;
+        this.pageCount = pageCount;
+        this.authors = null;
+        this.ISBN = ISBN;
+        this.reserved = reserved;
+        this.checkedOut = checkedOut;
+        this.base64Encoded = base64Encoded;
+        this.ficID = ficID;
+        this.specialCollection = specialCollection;
     }
 
     public String getName() {
-        return name;
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String t) {
+        this.title = t;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setAuthor(String a) {
+        this.author = a;
     }
 
     public int getImage() {
-        return image;
+        return 2;
     }
 
-    public void setImage(int image) {
-        this.image = image;
-    }
 }

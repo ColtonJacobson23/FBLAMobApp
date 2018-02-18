@@ -103,7 +103,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         startActivity(login);
 
         mTextMessage = (TextView) findViewById(R.id.message);
-        mLoading = (TextView) findViewById(R.id.loading_text_view);
+        //mLoading = (TextView) findViewById(R.id.loading_text_view);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 

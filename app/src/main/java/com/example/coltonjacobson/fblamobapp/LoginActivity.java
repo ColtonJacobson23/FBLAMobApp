@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.AlteredCharSequence;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +110,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
 
         );
+
+
 
 
     }
@@ -208,14 +212,22 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
     }
 
+    //Validates the basic features of the email/username entered
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+
+        if (email.length()==7||email.contains("@gmail.com")) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        if(password.length() > 7) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

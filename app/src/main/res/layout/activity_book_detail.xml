@@ -1,81 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" >
 
-    <TextView
-        android:id="@+id/textView_book_name"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_margin="8dp"
-        android:text="BookName"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/textView_author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="BookAuthor"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/textView_book_name"
-        tools:layout_editor_absoluteX="163dp" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="165dp"
-        android:layout_height="128dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/textView_author"
-        app:srcCompat="@drawable/ic_example_image" />
-
-
-    <Button
-        android:id="@+id/button_back"
-        android:layout_width="137dp"
-        android:layout_height="61dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Back to Main"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="368dp"
-        android:layout_height="73dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/imageView"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="361dp">
-
-        <Button
-            android:id="@+id/button_checkOut"
+        <TextView
+            android:id="@+id/textView_book_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Checkout"
-            android:onClick="onCheckoutClicked"/>
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_margin="8dp"
+            android:text="BookName"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
 
-        <Button
-            android:id="@+id/button_reserve"
+        <TextView
+            android:id="@+id/textView_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Reserve"
-            android:onClick="onReserveClicked"/>
-    </LinearLayout>
-</RelativeLayout>
+            android:layout_marginTop="8dp"
+            android:text="BookAuthor"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/textView_book_name"
+            tools:layout_editor_absoluteX="163dp" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="165dp"
+            android:layout_height="128dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/textView_author"
+            app:srcCompat="@drawable/ic_example_image" />
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="368dp"
+            android:layout_height="73dp"
+            android:layout_below="@id/imageView"
+            android:gravity="center"
+            android:orientation="horizontal"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="361dp">
+
+            <Button
+                android:id="@+id/button_checkOut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onCheckoutClicked"
+                android:text="Checkout" />
+
+            <Button
+                android:id="@+id/button_reserve"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="onReserveClicked"
+                android:text="Reserve" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/map_container"
+            android:layout_below="@id/linearLayout">
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/map_container"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="Back to Main" />
+
+    </RelativeLayout>
+
+
+</ScrollView>
