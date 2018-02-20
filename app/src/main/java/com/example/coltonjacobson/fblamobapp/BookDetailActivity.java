@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
+//import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
 
 import org.w3c.dom.Text;
 
@@ -85,10 +85,10 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         Button button = (Button) view;
         if (button.getText().equals("Check In")) {
             button.setText("Check Out");
-            BooksCollection.getBooks().get(position).setCheckedOut(false);
+            //BooksCollection.getBooks().get(position).setCheckedOut(false);
         } else {
             button.setText("Check In");
-            BooksCollection.getBooks().get(position).setCheckedOut(true);
+            //BooksCollection.getBooks().get(position).setCheckedOut(true);
         }
 
     }
@@ -98,10 +98,10 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         Button button = (Button) view;
         if (button.getText().equals("Cancel Reserve")) {
             button.setText("Reserve");
-            BooksCollection.getBooks().get(position).setReserved(false); //These set functions don't appear to be storing any data yet
+            //BooksCollection.getBooks().get(position).setReserved(false); //These set functions don't appear to be storing any data yet
         } else {
             button.setText("Cancel Reserve");
-            BooksCollection.getBooks().get(position).setReserved(true);
+            //BooksCollection.getBooks().get(position).setReserved(true);
         }
 
     }

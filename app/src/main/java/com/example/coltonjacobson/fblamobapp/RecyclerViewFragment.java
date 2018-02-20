@@ -25,7 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.coltonjacobson.fblamobapp.bookData.Book;
-import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
+//import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,11 +53,11 @@ public class RecyclerViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.recycler_view_fragment,container,false);
 
 
-        ArrayList<Book> books = BooksCollection.getBooks();
+        //ArrayList<Book> books = BooksCollection.getBooks();
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
+        //recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
         loadBookData();
 
 
@@ -192,11 +192,11 @@ public class RecyclerViewFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerViewHolder holder, int position) {
 
-            final String bookTitle = books.get(position).getName();
-            final int bookImage = books.get(position).getImage();
-            final String bookAuthor = books.get(position).getAuthor();
-            final boolean isCheckedOut = books.get(position).isCheckedOut();
-            final boolean isReserved = books.get(position).isReserved();
+            final String bookTitle = "Title";//books.get(position).getName();
+            final int bookImage = R.drawable.book_redbackground_launcher_foreground;//books.get(position).getImage();
+            final String bookAuthor = "Authos";//books.get(position).getAuthor();
+            final boolean isCheckedOut = false;//books.get(position).isCheckedOut();
+            final boolean isReserved = false;//books.get(position).isReserved();
 
             holder.mBookName.setText(bookTitle);
             holder.mImageView.setImageResource(bookImage);

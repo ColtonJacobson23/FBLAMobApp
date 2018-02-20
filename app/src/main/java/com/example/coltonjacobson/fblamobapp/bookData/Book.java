@@ -7,32 +7,24 @@ import java.util.ArrayList;
  */
 
 public class Book {
+    //Variables are ordered based on their order in the database
     private String title;
+    private int pageCount;
+
+    //Founds inside the cover object
+    private String base64Encoded;
+
+    //Could be more than one author
     private ArrayList<String> authors;
+
     private int ISBN;
+    private int deweyDecimal;
     private boolean reserved;
     private boolean checkedOut;
-    private int pageCount;
-    private String base64Encoded;
     private String ficID;
     private String specialCollection;
 
 
-    public boolean isReserved() {
-        return reserved;
-    }
-
-    public void setReserved(boolean reserved) {
-        this.reserved = reserved;
-    }
-
-    public boolean isCheckedOut() {
-        return checkedOut;
-    }
-
-    public void setCheckedOut(boolean checkedOut) {
-        this.checkedOut = checkedOut;
-    }
 
 
 
@@ -49,24 +41,5 @@ public class Book {
         this.specialCollection = specialCollection;
     }
 
-    public String getName() {
-        return title;
-    }
-
-    public void setName(String t) {
-        this.title = t;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String a) {
-        this.author = a;
-    }
-
-    public int getImage() {
-        return 2;
-    }
 
 }
