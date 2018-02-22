@@ -58,6 +58,7 @@ public class DBAccessor {
                 } catch(JSONException e) {
 
                     e.printStackTrace();
+                    Toast.makeText(context, "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
 
                 }
 

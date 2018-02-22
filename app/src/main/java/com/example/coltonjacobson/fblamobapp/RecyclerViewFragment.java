@@ -25,7 +25,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.coltonjacobson.fblamobapp.bookData.Book;
-//import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +42,7 @@ import java.util.Map;
 
 public class RecyclerViewFragment extends Fragment {
 
-    ArrayList<Book> bookList = new ArrayList<Book>();
+    ArrayList<Book> bookList = new ArrayList<>();
     DBAccessor dbAccessor;
     String getURL = "https://lizardswimmer.azurewebsites.net/simple/books";
 
@@ -62,6 +61,8 @@ public class RecyclerViewFragment extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        //Toast.makeText(getContext(), bookList.toString(), Toast.LENGTH_SHORT).show();
 
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
