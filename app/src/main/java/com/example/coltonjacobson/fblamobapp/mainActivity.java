@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +45,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         return new RecyclerViewFragment().newInstance();
     }
 
-    Map<String,Book> stringBookMap;
+    ArrayList<Book> bookList;
+    DBAccessor dbAccessor;
     boolean DBAttempt;
     private TextView mTextMessage;
     TextView mLoading;
@@ -108,16 +110,15 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        DBAccessor dbAccessor = new DBAccessor(this);
+        dbAccessor = new DBAccessor(this);
         try {
-            stringBookMap = dbAccessor.loadData(getURL);
+            bookList = dbAccessor.loadData(getURL);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         mTextMessage.setText("");
         authenticate();
 
-        Toast.makeText(mainActivity.this, stringBookMap.toString(), Toast.LENGTH_SHORT).show();
 
 
 

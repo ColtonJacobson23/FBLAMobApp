@@ -11,6 +11,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.coltonjacobson.fblamobapp.bookData.Book;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,6 +19,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+
 
 /**
  * Created bycolton on 2/18/2018.
@@ -28,7 +31,7 @@ import java.util.Map;
 
 public class DBAccessor {
 
-    Map<String,Book> bookMap = new HashMap<>();
+    private ArrayList<Book> bookList;
 
     private Context context;
 
@@ -37,7 +40,7 @@ public class DBAccessor {
 
     }
 
-    public Map<String, Book> loadData(String getURL) throws JSONException{
+    public ArrayList<Book> loadData(String getURL) throws JSONException{
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL, new Response.Listener<String>() {
             @Override
@@ -47,7 +50,8 @@ public class DBAccessor {
 
 
                     JSONArray jsonArray = new JSONArray(response);
-                    bookMap = makeBookMap(jsonArray);
+                    Toast.makeText(context, jsonArray.toString()+"HI", Toast.LENGTH_SHORT).show();
+                    bookList = makeBookArrayList(jsonArray);
 
 
 
@@ -70,32 +74,44 @@ public class DBAccessor {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         requestQueue.add(stringRequest);
 
-        return bookMap;
+        return bookList;
     }
 
-    private Map<String, Book> makeBookMap(JSONArray jsonArray) throws JSONException {
-        Map<String,Book> bookMap = new HashMap<>();
+    private ArrayList<Book> makeBookArrayList(JSONArray jsonArray) throws JSONException {
         JSONObject jsonObject = null;
         String title = "";
-        Book book = null;
+        Book book;
+        bookList = new ArrayList<Book>();
+
+        Toast.makeText(this.context, jsonArray.getJSONObject(0).toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this.context, jsonArray.getJSONObject(1).toString(), Toast.LENGTH_SHORT).show();
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            jsonObject = jsonArray.getJSONObject(i);
-            title = jsonObject.getString("title");
-            book = new Book(jsonObject.getString("title"),
-                jsonObject.getInt("pageCount"),
-                jsonObject.getString("cover").substring(0,10),
-                Book.makeAuthorList(jsonObject.getJSONArray("authorBooks")),
-                jsonObject.getInt("ISBN"),
-                false,
-                false,
-                jsonObject.getString("ficID"));
-            bookMap.put(title,book);
+            try {
+                jsonObject = jsonArray.getJSONObject(i);
+                Toast.makeText(this.context, jsonObject.getString("isbn"), Toast.LENGTH_SHORT).show();
+                book = new Book(jsonObject.getString("title"),
+                        jsonObject.getInt("pageCount"),
+                        jsonObject.getJSONObject("cover").getString("base64Encoded"),
+                        Book.makeAuthorList(jsonObject.getJSONArray("authors")),
+                        jsonObject.getString("isbn"),
+                        false,
+                        false,
+                        jsonObject.getInt("deweyDecimal"),
+                        jsonObject.getString("ficID"));
+                bookList.add(book);
+                Toast.makeText(context, bookList.toString(), Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+
+            }
 
         }
 
-        return bookMap;
+        return bookList;
 
     }
+
 }
 

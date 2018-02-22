@@ -205,7 +205,7 @@ public class ProfileFragment extends Fragment {
                     jsonArray = new JSONArray(response);
                     Authors = jsonToArraylist(jsonArray, "authors");
                     Titles = jsonToArraylist(jsonArray,"title");
-                    ISBNs = jsonToArraylist(jsonArray,"ISBN");
+                    ISBNs = jsonToArraylist(jsonArray,"isbn");
 
 
 

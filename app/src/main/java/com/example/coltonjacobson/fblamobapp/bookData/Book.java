@@ -30,7 +30,7 @@ public class Book {
     //Could be more than one author
     private ArrayList<String> authors;
 
-    private int ISBN;
+    private String isbn;
     private int deweyDecimal;
     private boolean reserved;
     private boolean checkedOut;
@@ -40,15 +40,16 @@ public class Book {
 
 
 
-    public Book(String title, int pageCount, String base64Encoded, ArrayList<String> authors, int ISBN, boolean reserved,
-                boolean checkedOut, String ficID) {
+    public Book(String title, int pageCount, String base64Encoded, ArrayList<String> authors, String isbn, boolean reserved,
+                boolean checkedOut, int deweyDecimal, String ficID) {
         this.title = title;
         this.pageCount = pageCount;
         this.authors = authors;
-        this.ISBN = ISBN;
+        this.isbn = isbn;
         this.reserved = reserved;
         this.checkedOut = checkedOut;
         this.base64Encoded = base64Encoded;
+        this.deweyDecimal = deweyDecimal;
         this.ficID = ficID;
     }
 
@@ -70,11 +71,49 @@ public class Book {
         }
 
         for (int i = 0; i < jArray.length();i++)  {
-            arrayList.add(jArray.getJSONObject(0).getJSONObject("author").getString("name"));
+            arrayList.add(jArray.getString(i));
         }
 
         return arrayList;
     }
 
+    public String toString() {
+        return title + pageCount + authors + isbn + reserved + checkedOut + base64Encoded + ficID;
+    }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public String getBase64Encoded() {
+        return base64Encoded;
+    }
+
+    public ArrayList<String> getAuthors() {
+        return authors;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public int getDeweyDecimal() {
+        return deweyDecimal;
+    }
+
+    public boolean isReserved() {
+        return reserved;
+    }
+
+    public boolean isCheckedOut() {
+        return checkedOut;
+    }
+
+    public String getFicID() {
+        return ficID;
+    }
 }

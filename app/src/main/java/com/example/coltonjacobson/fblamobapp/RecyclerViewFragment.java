@@ -43,9 +43,10 @@ import java.util.Map;
 
 public class RecyclerViewFragment extends Fragment {
 
-    Map<String,Book> bookMap = new HashMap<>();
-    String url = "https://lizardswimmer.azurewebsites.net/simple/books";
-    JSONArray jsonArray;
+    ArrayList<Book> bookList = new ArrayList<Book>();
+    DBAccessor dbAccessor;
+    String getURL = "https://lizardswimmer.azurewebsites.net/simple/books";
+
     ArrayList<String> Authors;
     ArrayList<String> Titles;
     ArrayList<String> ISBNs;
@@ -55,67 +56,21 @@ public class RecyclerViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragment,container,false);
 
+        dbAccessor = new DBAccessor(this.getContext());
+        try {
+            bookList = dbAccessor.loadData(getURL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        //ArrayList<Book> books = BooksCollection.getBooks();
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
-        loadBookData();
-
+        recyclerView.setAdapter(new RecyclerViewAdapter(bookList,getContext()));
 
 
 
         return view;
-
-    }
-
-//Simple request function to get all book objects from DB
-    private void loadBookData() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-
-
-                    jsonArray = new JSONArray(response);
-                    Authors = jsonToArraylist(jsonArray, "authors");
-                    Titles = jsonToArraylist(jsonArray,"title");
-                    ISBNs = jsonToArraylist(jsonArray,"ISBN");
-
-
-
-                } catch(JSONException e) {
-
-                    e.printStackTrace();
-
-                }
-
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        Toast.makeText(getContext(), "Couldn't retrieve data", Toast.LENGTH_SHORT).show();
-
-                    }
-                });
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(stringRequest);
-    }
-
-    //To turn a JSON array into Arraylists of Book Data
-    public ArrayList<String> jsonToArraylist(JSONArray jArray, String name) throws JSONException {
-
-        JSONObject jObject = jArray.getJSONObject(0);
-        ArrayList<String> strings = new ArrayList<String>();
-        for (int i = 0; i < jArray.length();i++) {
-            jObject = jArray.getJSONObject(i);
-            strings.add(jObject.getString(name));
-        }
-        return strings;
 
     }
 
@@ -168,19 +123,14 @@ public class RecyclerViewFragment extends Fragment {
     private class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder>{
 
         private Context cText;
-        private ArrayList<String> authors;
-        private ArrayList<String> titles;
-        private ArrayList<String> isbns;
         private ArrayList<Book> books;
 
 
-        public RecyclerViewAdapter(ArrayList<Book> books, Context context) {
+        public RecyclerViewAdapter(ArrayList<Book> booklist, Context context) {
 
-            this.authors = Authors;
-            this.titles = Titles;
-            this.isbns = ISBNs;
             this.cText = context;
-            this.books = books;
+            books = new ArrayList<>();
+            this.books = booklist;
 
 
         }
@@ -195,11 +145,11 @@ public class RecyclerViewFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerViewHolder holder, int position) {
 
-            final String bookTitle = "Title";//books.get(position).getName();
-            final int bookImage = R.drawable.book_redbackground_launcher_foreground;//books.get(position).getImage();
-            final String bookAuthor = "Authos";//books.get(position).getAuthor();
-            final boolean isCheckedOut = false;//books.get(position).isCheckedOut();
-            final boolean isReserved = false;//books.get(position).isReserved();
+            final String bookTitle = books.get(position).getTitle();
+            final int bookImage = R.drawable.mockingjay_image;
+            final String bookAuthor = books.get(position).getAuthors().toString();
+            final boolean isCheckedOut = books.get(position).isCheckedOut();
+            final boolean isReserved = books.get(position).isReserved();
 
             holder.mBookName.setText(bookTitle);
             holder.mImageView.setImageResource(bookImage);
