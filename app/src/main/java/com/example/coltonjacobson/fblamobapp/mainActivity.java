@@ -25,6 +25,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.coltonjacobson.fblamobapp.bookData.Book;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,11 +44,12 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         return new RecyclerViewFragment().newInstance();
     }
 
+    Map<String,Book> stringBookMap;
     boolean DBAttempt;
     private TextView mTextMessage;
     TextView mLoading;
-    String getURL = "http://lizardswimmer.azurewebsites.net/simple/books";
-    String postURL = "http://lizardswimmer.azurewebsites.net/login";
+    String getURL = "https://lizardswimmer.azurewebsites.net/simple/books";
+    String postURL = "https://lizardswimmer.azurewebsites.net/user/login";
 
     //Changes the fragment displayed on the screen to the one associated with each button
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -66,7 +68,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                     android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                     fragmentTransaction.replace(R.id.recyclerViewContainer,fragment,"FragmentName");
                     fragmentTransaction.commit();
-                    loadBookData();
 
                     setTitle("Home");
                     return true;
@@ -107,9 +108,17 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        loadBookData();
+        DBAccessor dbAccessor = new DBAccessor(this);
+        try {
+            stringBookMap = dbAccessor.loadData(getURL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         mTextMessage.setText("");
         authenticate();
+
+        Toast.makeText(mainActivity.this, stringBookMap.toString(), Toast.LENGTH_SHORT).show();
+
 
 
 
@@ -124,38 +133,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         return false;
     }
 
-    private void loadBookData() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                try {
-
-
-                    JSONArray jsonArray = new JSONArray(response);
-                    JSONObject jsonObject = jsonArray.getJSONObject(0);
-                    DBAttempt = true;
-                    setTitle(jsonObject.getString("title"));
-
-                } catch(JSONException e) {
-
-                    e.printStackTrace();
-
-                }
-
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        DBAttempt = false;
-
-                    }
-                });
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(stringRequest);
-    }
 
     @Override
     public void onBackPressed() {

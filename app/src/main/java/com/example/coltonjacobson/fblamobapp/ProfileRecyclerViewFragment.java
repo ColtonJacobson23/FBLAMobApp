@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 public class ProfileRecyclerViewFragment extends Fragment {
 
-    String url = "http://lizardswimmer.azurewebsites.net/simple/books";
+    String url = "https://lizardswimmer.azurewebsites.net/simple/books";
     JSONArray jsonArray;
     ArrayList<String> Authors;
     ArrayList<String> Titles;

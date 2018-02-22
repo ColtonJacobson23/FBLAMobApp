@@ -33,7 +33,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by colto on 1/12/2018.
@@ -41,7 +43,8 @@ import java.util.List;
 
 public class RecyclerViewFragment extends Fragment {
 
-    String url = "http://lizardswimmer.azurewebsites.net/simple/books";
+    Map<String,Book> bookMap = new HashMap<>();
+    String url = "https://lizardswimmer.azurewebsites.net/simple/books";
     JSONArray jsonArray;
     ArrayList<String> Authors;
     ArrayList<String> Titles;
