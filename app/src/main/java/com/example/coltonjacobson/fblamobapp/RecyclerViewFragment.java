@@ -46,9 +46,6 @@ public class RecyclerViewFragment extends Fragment {
     DBAccessor dbAccessor;
     String getURL = "https://lizardswimmer.azurewebsites.net/simple/books";
 
-    ArrayList<String> Authors;
-    ArrayList<String> Titles;
-    ArrayList<String> ISBNs;
 
     @Nullable
     @Override
@@ -60,9 +57,10 @@ public class RecyclerViewFragment extends Fragment {
             bookList = dbAccessor.loadData(getURL);
         } catch (JSONException e) {
             e.printStackTrace();
+            Toast.makeText(getContext(), "LINE 60 BROKE", Toast.LENGTH_SHORT).show();
         }
 
-        //Toast.makeText(getContext(), bookList.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), bookList.toString(), Toast.LENGTH_SHORT).show();
 
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
