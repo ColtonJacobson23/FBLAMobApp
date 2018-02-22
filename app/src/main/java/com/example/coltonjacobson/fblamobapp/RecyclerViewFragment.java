@@ -129,7 +129,6 @@ public class RecyclerViewFragment extends Fragment {
         public RecyclerViewAdapter(ArrayList<Book> booklist, Context context) {
 
             this.cText = context;
-            books = new ArrayList<>();
             this.books = booklist;
 
 
