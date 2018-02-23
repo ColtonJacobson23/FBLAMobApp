@@ -33,6 +33,8 @@ public class DBAccessor {
 
     private ArrayList<Book> bookList;
 
+    private ArrayList components;
+
     private Context context;
 
     public DBAccessor(Context c) {
@@ -79,8 +81,9 @@ public class DBAccessor {
     }
 
     private ArrayList<Book> makeBookArrayList(JSONArray jsonArray) throws JSONException {
-        JSONObject jsonObject = null;
-        String title = "";
+
+        makeComponents(jsonArray);
+        JSONObject jsonObject;
         Book book;
         bookList = new ArrayList<Book>();
 
@@ -90,7 +93,6 @@ public class DBAccessor {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 jsonObject = jsonArray.getJSONObject(i);
-                Toast.makeText(this.context, jsonObject.getString("isbn"), Toast.LENGTH_SHORT).show();
                 book = new Book(jsonObject.getString("title"),
                         jsonObject.getInt("pageCount"),
                         jsonObject.getJSONObject("cover").getString("base64Encoded"),
@@ -98,7 +100,7 @@ public class DBAccessor {
                         jsonObject.getString("isbn"),
                         false,
                         false,
-                        jsonObject.getInt("deweyDecimal"),
+                        jsonObject.getString("deweyDecimal"),
                         jsonObject.getString("ficID"));
                 bookList.add(book);
                 Toast.makeText(context, bookList.toString(), Toast.LENGTH_SHORT).show();
@@ -113,6 +115,31 @@ public class DBAccessor {
         return bookList;
 
     }
+
+    private void makeComponents(JSONArray jsonArray) {
+        components = new ArrayList();
+        String titleB = null;
+        String pageCountB = null;
+        Object coverB = null;
+        String base64EncodedB = null;
+        ArrayList<String> authorsB = null;
+        String isbnB = null;
+        String deweyDecimalB = null;
+        String ficIDB = null;
+        components.add(titleB);
+        components.add(pageCountB);
+        components.add(coverB);
+        components.add(base64EncodedB);
+        components.add(authorsB);
+        components.add(isbnB);
+        components.add(deweyDecimalB);
+        components.add(ficIDB);
+
+
+
+
+    }
+
 
 }
 

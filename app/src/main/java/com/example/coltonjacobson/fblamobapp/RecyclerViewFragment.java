@@ -11,6 +11,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,12 +56,13 @@ public class RecyclerViewFragment extends Fragment {
         dbAccessor = new DBAccessor(this.getContext());
         try {
             bookList = dbAccessor.loadData(getURL);
+            Toast.makeText(getContext(), "Line 81, Just Got DATA", Toast.LENGTH_SHORT).show();
+
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "LINE 60 BROKE", Toast.LENGTH_SHORT).show();
         }
 
-        Toast.makeText(getContext(), bookList.toString(), Toast.LENGTH_SHORT).show();
 
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
@@ -71,6 +73,18 @@ public class RecyclerViewFragment extends Fragment {
 
         return view;
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            bookList = dbAccessor.loadData(getURL);
+            Toast.makeText(getContext(), "Line 81, Just Got DATA", Toast.LENGTH_SHORT).show();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "LINE 60 BROKE", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -127,6 +141,7 @@ public class RecyclerViewFragment extends Fragment {
 
         public RecyclerViewAdapter(ArrayList<Book> booklist, Context context) {
 
+
             this.cText = context;
             this.books = booklist;
 
@@ -169,7 +184,7 @@ public class RecyclerViewFragment extends Fragment {
         @Override
         public int getItemCount() {
             //Five or more
-            return books.size();
+            return null!=books?books.size():0;
         }
 
         private void openBookDetailActivity(String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position) {

@@ -31,7 +31,7 @@ public class Book {
     private ArrayList<String> authors;
 
     private String isbn;
-    private int deweyDecimal;
+    private String deweyDecimal;
     private boolean reserved;
     private boolean checkedOut;
     private String ficID;
@@ -41,7 +41,7 @@ public class Book {
 
 
     public Book(String title, int pageCount, String base64Encoded, ArrayList<String> authors, String isbn, boolean reserved,
-                boolean checkedOut, int deweyDecimal, String ficID) {
+                boolean checkedOut, String deweyDecimal, String ficID) {
         this.title = title;
         this.pageCount = pageCount;
         this.authors = authors;
@@ -101,7 +101,7 @@ public class Book {
         return isbn;
     }
 
-    public int getDeweyDecimal() {
+    public String getDeweyDecimal() {
         return deweyDecimal;
     }
 
