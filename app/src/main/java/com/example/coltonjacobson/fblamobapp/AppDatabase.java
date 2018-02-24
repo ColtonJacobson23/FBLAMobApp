@@ -2,10 +2,7 @@ package com.example.coltonjacobson.fblamobapp;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
-
-import com.example.coltonjacobson.fblamobapp.bookData.Book;
 
 
 /**
@@ -15,4 +12,5 @@ import com.example.coltonjacobson.fblamobapp.bookData.Book;
 @Database(entities = {Book.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract BookDao bookDao();
+
 }

@@ -1,25 +1,18 @@
-package com.example.coltonjacobson.fblamobapp.bookData;
+package com.example.coltonjacobson.fblamobapp;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
-import android.widget.Toast;
-
-import com.example.coltonjacobson.fblamobapp.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by colto on 1/15/2018.
@@ -43,7 +36,7 @@ public class Book {
 
     @ColumnInfo(name = "book_authors")
     //Could be more than one author
-    private List<String> authors;
+    private ArrayList<String> authors;
 
     @ColumnInfo(name = "book_isbn")
     private String isbn;
@@ -75,7 +68,7 @@ public class Book {
         String titleB = "no title";
         int pageCountB = 200;
         String base64EncodedB = "no base64 string";
-        ArrayList<String> authorsB = new ArrayList<String>();
+        ArrayList<String> authorsB =new ArrayList<String>();
         authorsB.add("no author");
         String isbnB = "000-0000000000";
         String deweyDecimalB = "no dewey";
@@ -188,7 +181,6 @@ public class Book {
                         jsonObject.getString("deweyDecimal"),
                         jsonObject.getString("ficID"));
                 bookList.add(book);
-                Toast.makeText(context, bookList.toString(), Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
 
                 e.printStackTrace();
@@ -221,7 +213,7 @@ public class Book {
         this.base64Encoded = base64Encoded;
     }
 
-    public void setAuthors(List<String> authors) {
+    public void setAuthors(ArrayList<String> authors) {
         this.authors = authors;
     }
 
@@ -257,7 +249,7 @@ public class Book {
         return base64Encoded;
     }
 
-    public List<String> getAuthors() {
+    public ArrayList<String> getAuthors() {
         return authors;
     }
 

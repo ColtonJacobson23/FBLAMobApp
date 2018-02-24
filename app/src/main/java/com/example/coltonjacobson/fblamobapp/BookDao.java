@@ -1,10 +1,7 @@
 package com.example.coltonjacobson.fblamobapp;
-
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-
-import com.example.coltonjacobson.fblamobapp.bookData.Book;
 
 import java.util.List;
 
@@ -17,8 +14,22 @@ public interface BookDao {
     @Query("SELECT * FROM Book")
     List<Book> getAllBooks();
 
+    /* Not quite working */
+    @Query("SELECT * FROM Book where id = :id")
+    Book getBookByID(int id);
+
+    @Query("SELECT * FROM Book where book_title = :title")
+    Book getBookByTitle(String title);
+
     @Insert
     void insertAll(Book... books);
+
+    @Insert
+    void insertBook(Book book);
+
+    @Query("DELETE FROM Book")
+    void deleteAll();
+
 
 
 

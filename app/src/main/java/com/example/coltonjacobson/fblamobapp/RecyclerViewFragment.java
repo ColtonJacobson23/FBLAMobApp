@@ -11,7 +11,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +18,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.coltonjacobson.fblamobapp.bookData.Book;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.w3c.dom.Text;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -45,9 +46,11 @@ public class RecyclerViewFragment extends Fragment {
 
     ArrayList<Book> bookList = new ArrayList<>();
     RecyclerView recyclerView;
-    String getURL = "https://lizardswimmer.azurewebsites.net/simple/books";
+    String getURL = "https://fblamobileapp.azurewebsites.net/simple/books";
+    String userInformationURL= "https://fblamobileapp.azurewebsites.net/user/info";
 
     AppDatabase database;
+    ArrayList<Book> books;
 
 
 
@@ -57,26 +60,34 @@ public class RecyclerViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragment,container,false);
 
-        try {
-            loadData();
-            Toast.makeText(getContext(), bookList.toString(), Toast.LENGTH_SHORT).show();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "FAILUREEEEEEEE", Toast.LENGTH_SHORT).show();
-        }
-
         //Room Database
-        Toast.makeText(getContext(), bookList.toString() + "2nd", Toast.LENGTH_SHORT).show();
-        database = Room.databaseBuilder(getContext(),AppDatabase.class, "production")
+        database = Room.databaseBuilder(getContext(),AppDatabase.class, "main")
                 .allowMainThreadQueries()
                 .build();
-        List<Book> books = database.bookDao().getAllBooks();
-        Toast.makeText(getContext(), "*******\n" + books.toString() + "\n*******", Toast.LENGTH_SHORT).show();
+
+        try {
+            loadData();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
+        }
+
+        books = (ArrayList)database.bookDao().getAllBooks();
+
+        Toast.makeText(getContext(), getToken() + "before running loadUserInformation", Toast.LENGTH_SHORT).show();
+        try {
+            loadUserInformation();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "User information could not be loaded.", Toast.LENGTH_SHORT).show();
+        }
+
+
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new RecyclerViewAdapter(bookList,getContext()));
-        Toast.makeText(getContext(), bookList.toString() + "3RD", Toast.LENGTH_SHORT).show();
+        recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
+
 
 
         return view;
@@ -93,19 +104,18 @@ public class RecyclerViewFragment extends Fragment {
                 try {
 
                     JSONArray jsonArray = new JSONArray(response);
+
+                    database.bookDao().deleteAll();
                     bookList = Book.makeBookArrayList(getContext(),jsonArray,bookList);
-                    Toast.makeText(getContext(), bookList.toString() + "in the method", Toast.LENGTH_SHORT).show();
+                    for(Book b:bookList) {
+                        database.bookDao().insertBook(b);
+                    }
 
-
-                    //Testing if room DB works from inside request
-                    Book a = new Book();
-                    Book b = new Book();
-                    database.bookDao().insertAll(a,b);
 
                 } catch(JSONException e) {
 
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "loadData @ loadData failed", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -115,13 +125,101 @@ public class RecyclerViewFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "loadData @ loadData failed", Toast.LENGTH_SHORT).show();
 
                     }
                 });
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
 
+
+    }
+
+    public void loadUserInformation() throws JSONException{
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, userInformationURL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                //Attempt to get JSON objects for books checked out and books reserved
+                try {
+
+                    //Getting checkouts, renewals, and reservations
+                    JSONObject jsonObject = new JSONObject(response);
+                    Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Line 145", Toast.LENGTH_SHORT).show();
+
+                    //This is breaking the JSON
+                    JSONArray checkouts = jsonObject.getJSONArray("checkouts");
+
+                    Toast.makeText(getContext(), "Line 147", Toast.LENGTH_SHORT).show();
+                    JSONArray reservations = jsonObject.getJSONArray("reservations");
+
+                    Toast.makeText(getContext(), "Line 149", Toast.LENGTH_SHORT).show();
+
+
+
+                    for (int i = 0; i < checkouts.length(); i++) {
+                        Toast.makeText(getContext(), "Inside checkouts for loop", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), books.get(1).toString(), Toast.LENGTH_SHORT).show();
+                        for (Book b : books) {
+                            if (b.getId() == checkouts.getJSONObject(i).getInt("bookID") &&
+                                    checkouts.getJSONObject(i).getBoolean("active")) {
+                                database.bookDao().getBookByTitle(b.getTitle()).setCheckedOut(true);
+                                Toast.makeText(getContext(), "Made checkout active", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                    for (int i = 0; i < reservations.length(); i++) {
+                        for (Book b : books) {
+                            if (b.getId() == reservations.getJSONObject(i).getInt("bookID") &&
+                                    reservations.getJSONObject(i).getBoolean("active")) {
+                                database.bookDao().getBookByTitle(b.getTitle()).setReserved(true);
+                            }
+                        }
+                    }
+
+
+            } catch(JSONException e) {
+
+                    e.printStackTrace();
+                    Log.d(TAG, "FINDME: " + e);
+                    Toast.makeText(getContext(), "JSON parse @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+
+        },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    Toast.makeText(getContext(), "loadData @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "FINDME: " + error);
+
+                }
+            })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> header = new HashMap<String,String>();
+                header.put("Content-Type", "application/json");
+                header.put("Authorization", "Bearer " + getToken());
+                return header;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
+
+
+
+    }
+
+    private String getToken() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userToken",Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("token","NO_TOKEN");
+        return token;
 
     }
 
@@ -185,10 +283,10 @@ public class RecyclerViewFragment extends Fragment {
     private class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder>{
 
         private Context cText;
-        private ArrayList<Book> books;
+        private List<Book> books;
 
 
-        public RecyclerViewAdapter(ArrayList<Book> booklist, Context context) {
+        public RecyclerViewAdapter(List<Book> booklist, Context context) {
 
 
             this.cText = context;

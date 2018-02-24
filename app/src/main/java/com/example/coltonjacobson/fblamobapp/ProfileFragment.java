@@ -115,10 +115,9 @@
 
 package com.example.coltonjacobson.fblamobapp;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -126,7 +125,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -140,14 +138,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.coltonjacobson.fblamobapp.bookData.Book;
 //import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -157,26 +152,37 @@ import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
-    String url = "https://lizardswimmer.azurewebsites.net/simple/books";
+    String getURL = "https://fblamobileapp.azurewebsites.net/simple/books";
+    AppDatabase database;
     JSONArray jsonArray;
-    ArrayList<String> Authors;
-    ArrayList<String> Titles;
-    ArrayList<String> ISBNs;
+    ArrayList<Book> bookList;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile,container,false);
 
+        //Room Database
+        database = Room.databaseBuilder(getContext(),AppDatabase.class, "main")
+                .allowMainThreadQueries()
+                .build();
+        List<Book> books = database.bookDao().getAllBooks();
 
-        //ArrayList<Book> books = new ArrayList<Book>{new Book("Title",100, String base64Encoded, ArrayList<String> authors, int ISBN, boolean reserved,
-        //boolean checkedOut, String ficID, String specialCollection)}//BooksCollection.getBooks();
+        //Makes a simple request for all book information in the Simple Endpoint
+        try {
+            loadBookData();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
+        }
+
 
         RecyclerView recyclerView = view.findViewById(R.id.profile_recycler_view);
         RecyclerView recyclerView2 = view.findViewById(R.id.profile_recycler_view2);
 
-        //recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
-        //recyclerView2.setAdapter(new RecyclerViewAdapter(books, getContext()));
+        recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
+        recyclerView2.setAdapter(new RecyclerViewAdapter(books, getContext()));
 
 
         //Creates the manager for a horizontal scrolling view
@@ -185,33 +191,34 @@ public class ProfileFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false);
         recyclerView2.setLayoutManager(layoutManager2);
 
-        //Makes a simple request for all book information in the Simple Endpoint
-        loadBookData();
 
 
         return view;
 
     }
 
-    //Simple request function to get all book objects from DB
-    private void loadBookData() {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+    public void loadBookData() throws JSONException{
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
+                //Attempt to get JSON and parse it to a book ArrayList
                 try {
 
+                    JSONArray jsonArray = new JSONArray(response);
 
-                    jsonArray = new JSONArray(response);
-                    Authors = jsonToArraylist(jsonArray, "authors");
-                    Titles = jsonToArraylist(jsonArray,"title");
-                    ISBNs = jsonToArraylist(jsonArray,"isbn");
-
+                    database.bookDao().deleteAll();
+                    bookList = Book.makeBookArrayList(getContext(),jsonArray,bookList);
+                    for(Book b:bookList) {
+                        database.bookDao().insertBook(b);
+                    }
 
 
                 } catch(JSONException e) {
 
                     e.printStackTrace();
+                    Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -221,26 +228,27 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Toast.makeText(getContext(), "Couldn't retrieve data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
 
                     }
                 });
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
+
+
     }
 
-    //To turn a JSON array into Arraylists of Book Data
-    public ArrayList<String> jsonToArraylist(JSONArray jArray, String name) throws JSONException {
-
-        JSONObject jObject = jArray.getJSONObject(0);
-        ArrayList<String> strings = new ArrayList<String>();
-        for (int i = 0; i < jArray.length();i++) {
-            jObject = jArray.getJSONObject(i);
-            strings.add(jObject.getString(name));
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            loadBookData();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "FROM RESUME FAILURE", Toast.LENGTH_SHORT).show();
         }
-        return strings;
-
     }
+
 
 
     public static Fragment newInstance() {
@@ -291,20 +299,12 @@ public class ProfileFragment extends Fragment {
     private class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder>{
 
         private Context cText;
-        private ArrayList<String> authors;
-        private ArrayList<String> titles;
-        private ArrayList<String> isbns;
-        private ArrayList<Book> books;
+        private List<Book> books;
 
+        public RecyclerViewAdapter(List<Book> books, Context context) {
 
-        public RecyclerViewAdapter(ArrayList<Book> books, Context context) {
-
-            this.authors = Authors;
-            this.titles = Titles;
-            this.isbns = ISBNs;
             this.cText = context;
             this.books = books;
-
 
         }
 
@@ -318,11 +318,11 @@ public class ProfileFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerViewHolder holder, int position) {
 
-            final String bookTitle = "Title";//books.get(position).getName();
-            final int bookImage = R.drawable.book_redbackground_launcher_foreground;//books.get(position).getImage();
-            final String bookAuthor = "Authos";//books.get(position).getAuthor();
-            final boolean isCheckedOut = false;//books.get(position).isCheckedOut();
-            final boolean isReserved = false;//books.get(position).isReserved();
+            final String bookTitle = books.get(position).getTitle();
+            final int bookImage = R.drawable.mockingjay_image;
+            final String bookAuthor = books.get(position).getAuthors().toString();
+            final boolean isCheckedOut = books.get(position).isCheckedOut();
+            final boolean isReserved = books.get(position).isReserved();
 
             holder.mBookName.setText(bookTitle);
             holder.mImageView.setImageResource(bookImage);
