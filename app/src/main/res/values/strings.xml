@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Librarian</string>
     <string name="title_home">Home</string>
-    <string name="title_map">Map</string>
+    <string name="title_help">Help</string>
     <string name="title_profile">Profile</string>
     <string name="title_activity_login">Sign In</string>
 
@@ -21,9 +21,14 @@
     <string name="checkBoxTeacher_login_form_text">Teacher</string>
     <string name="checkBoxAdmin_login_form_text">Librarian</string>
 
+    <!--For the Shared Preferences file-->
+    <string name="sharedPrefFile">userToken</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="book_image_content_description">Library Book</string>
     <string name="recycler_view_bookname">BookName</string>
     <string name="db_get_failed">Couldn\'t Obtain Data</string>
+
+
 </resources>
