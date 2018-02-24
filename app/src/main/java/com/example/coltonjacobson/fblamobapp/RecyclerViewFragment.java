@@ -160,7 +160,7 @@ public class RecyclerViewFragment extends Fragment {
 
 
                     for (int i = 0; i < checkouts.length(); i++) {
-                        Toast.makeText(getContext(), "Inside checkouts for loop", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Inside checkouts for-loop", Toast.LENGTH_SHORT).show();
                         Toast.makeText(getContext(), books.get(1).toString(), Toast.LENGTH_SHORT).show();
                         for (Book b : books) {
                             if (b.getId() == checkouts.getJSONObject(i).getInt("bookID") &&
