@@ -34,6 +34,7 @@ public class DBAccessor {
     private ArrayList<Book> bookList;
 
     private ArrayList components;
+    private ArrayList fillText;
 
     private Context context;
 
@@ -52,9 +53,9 @@ public class DBAccessor {
 
 
                     JSONArray jsonArray = new JSONArray(response);
-                    Toast.makeText(context, jsonArray.toString()+"HI", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, jsonArray.toString()+"\nIn loadData, Before booklist is made, from jsonArray", Toast.LENGTH_SHORT).show();
                     bookList = makeBookArrayList(jsonArray);
-
+                    Toast.makeText(context, bookList.toString()+"\nIn loadData, Booklist once it is made, from BookList", Toast.LENGTH_SHORT).show();
 
 
                 } catch(JSONException e) {
@@ -82,13 +83,10 @@ public class DBAccessor {
 
     private ArrayList<Book> makeBookArrayList(JSONArray jsonArray) throws JSONException {
 
-        makeComponents(jsonArray);
         JSONObject jsonObject;
         Book book;
         bookList = new ArrayList<Book>();
 
-        Toast.makeText(this.context, jsonArray.getJSONObject(0).toString(), Toast.LENGTH_SHORT).show();
-        Toast.makeText(this.context, jsonArray.getJSONObject(1).toString(), Toast.LENGTH_SHORT).show();
 
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -102,8 +100,10 @@ public class DBAccessor {
                         false,
                         jsonObject.getString("deweyDecimal"),
                         jsonObject.getString("ficID"));
+
+                book = checkComponents(book);
                 bookList.add(book);
-                Toast.makeText(context, bookList.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, bookList.toString() + "\nmakeBookArrayList", Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
 
                 e.printStackTrace();
@@ -116,29 +116,8 @@ public class DBAccessor {
 
     }
 
-    private void makeComponents(JSONArray jsonArray) {
-        components = new ArrayList();
-        String titleB = null;
-        String pageCountB = null;
-        Object coverB = null;
-        String base64EncodedB = null;
-        ArrayList<String> authorsB = null;
-        String isbnB = null;
-        String deweyDecimalB = null;
-        String ficIDB = null;
-        components.add(titleB);
-        components.add(pageCountB);
-        components.add(coverB);
-        components.add(base64EncodedB);
-        components.add(authorsB);
-        components.add(isbnB);
-        components.add(deweyDecimalB);
-        components.add(ficIDB);
 
 
-
-
-    }
 
 
 }

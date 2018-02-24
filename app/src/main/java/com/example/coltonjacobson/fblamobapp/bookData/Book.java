@@ -55,7 +55,50 @@ public class Book {
 
     public static Bitmap toBitmap(Context c, String s) {
 
-        byte[] rawString = Base64.decode(s, Base64.DEFAULT);
+        private Book checkComponents(Book book) {
+
+            //All book features that might return a null and need to be dealt with
+            String titleB = "no title";
+            int pageCountB = 200;
+            String base64EncodedB = "no base64 string";
+            ArrayList<String> authorsB = new ArrayList<String>();
+            authorsB.add("no author");
+            String isbnB = "000-0000000000";
+            String deweyDecimalB = "no dewey";
+            String ficIDB = "no ficID";
+
+            if (book.getTitle() == null || book.getTitle().equals("")) {
+                book.setTitle(titleB);
+            }
+
+            if (book.getPageCount() == 0) {
+                book.setAuthors(authorsB);
+            }
+
+            if (book.getBase64Encoded() == null || book.getBase64Encoded().equals("")) {
+                book.setBase64Encoded(base64EncodedB);
+            }
+
+            if (book.getAuthors() == null || book.getAuthors() == new ArrayList<String>()) {
+                book.setAuthors(authorsB);
+            }
+
+            if (book.getIsbn() == null || book.getIsbn().equals("")) {
+                book.setIsbn(isbnB);
+            }
+
+            if (book.getDeweyDecimal() == null || book.getDeweyDecimal().equals("")) {
+                book.setDeweyDecimal(deweyDecimalB);
+            }
+
+            if (book.getFicID() == null || book.getFicID().equals("")) {
+                book.setFicID(ficIDB);
+            }
+
+            return book;
+
+
+            byte[] rawString = Base64.decode(s, Base64.DEFAULT);
         Bitmap imgDecoded = BitmapFactory.decodeByteArray(rawString,0,rawString.length);
         return imgDecoded;
 
@@ -78,7 +121,50 @@ public class Book {
     }
 
     public String toString() {
-        return title + pageCount + authors + isbn + reserved + checkedOut + base64Encoded + ficID;
+        return    "\nTitle: " + title
+                + "\nPageCount: " + pageCount
+                + "\nAuthors " + authors
+                + "\nisbn: " + isbn
+                + "\nReserved: " + reserved
+                + "\nCheckedout: " + checkedOut
+                + "\nB64Encoded: " + base64Encoded
+                + "\nficID: " + ficID;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
+    }
+
+    public void setBase64Encoded(String base64Encoded) {
+        this.base64Encoded = base64Encoded;
+    }
+
+    public void setAuthors(ArrayList<String> authors) {
+        this.authors = authors;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void setDeweyDecimal(String deweyDecimal) {
+        this.deweyDecimal = deweyDecimal;
+    }
+
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
+
+    public void setCheckedOut(boolean checkedOut) {
+        this.checkedOut = checkedOut;
+    }
+
+    public void setFicID(String ficID) {
+        this.ficID = ficID;
     }
 
     public String getTitle() {
