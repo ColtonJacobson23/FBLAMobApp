@@ -1,6 +1,7 @@
 package com.example.coltonjacobson.fblamobapp;
 
 import android.app.DownloadManager;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.net.Uri;
 import android.provider.ContactsContract;
@@ -34,6 +35,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -46,7 +48,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     }
 
     ArrayList<Book> bookList;
-    DBAccessor dbAccessor;
     boolean DBAttempt;
     private TextView mTextMessage;
     TextView mLoading;
@@ -109,15 +110,18 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         //mLoading = (TextView) findViewById(R.id.loading_text_view);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        dbAccessor = new DBAccessor(this);
-        try {
-            bookList = dbAccessor.loadData(getURL);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        mTextMessage.setText("");
         authenticate();
+
+        AppDatabase database = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "production")
+                .allowMainThreadQueries()
+                .build();
+        Book a = new Book();
+        Book b = new Book();
+        database.bookDao().insertAll(a,b);
+        List<Book> books = database.bookDao().getAllBooks();
+        Toast.makeText(this, "*******\n" + books.toString() + "\n*******", Toast.LENGTH_SHORT).show();
+
+
 
 
 
