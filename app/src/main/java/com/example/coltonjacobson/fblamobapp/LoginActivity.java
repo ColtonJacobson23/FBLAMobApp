@@ -3,7 +3,6 @@ package com.example.coltonjacobson.fblamobapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 
 import android.os.AsyncTask;
 
@@ -241,10 +240,7 @@ public class LoginActivity extends Activity {
                     public void onResponse(JSONObject response) {
                         try {
                             if (response.get("token") != null) {
-                                Toast.makeText(getApplicationContext(), "we got a token", Toast.LENGTH_SHORT).show();
-                                Toast.makeText(context, response.get("token").toString(), Toast.LENGTH_SHORT).show();
                                 writeTokenToFile(response.get("token").toString(),getApplicationContext());
-                                Toast.makeText(context, readTokenFile(getApplicationContext()), Toast.LENGTH_SHORT).show();
                             }
 
 

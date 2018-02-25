@@ -125,9 +125,11 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -143,6 +145,12 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -150,12 +158,13 @@ import java.util.List;
  * Created by colto on 1/12/2018.
  */
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     String getURL = "https://fblamobileapp.azurewebsites.net/simple/books";
     AppDatabase database;
     JSONArray jsonArray;
     ArrayList<Book> bookList;
+    Button logoutButton;
 
 
     @Nullable
@@ -163,19 +172,20 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile,container,false);
 
-        //Room Database
-        database = Room.databaseBuilder(getContext(),AppDatabase.class, "main")
-                .allowMainThreadQueries()
-                .build();
-        List<Book> books = database.bookDao().getAllBooks();
+        logoutButton = (Button) view.findViewById(R.id.sign_out_button);
+        logoutButton.setOnClickListener(this);
 
-        //Makes a simple request for all book information in the Simple Endpoint
-        try {
-            loadBookData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
-        }
+        //Room Database
+        database = ((mainActivity)getActivity()).getDatabase();
+        ArrayList<Book> books = (ArrayList<Book>) database.bookDao().getAllBooks();
+
+//        //Makes a simple request for all book information in the Simple Endpoint
+//        try {
+//            loadBookData();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
+//        }
 
 
         RecyclerView recyclerView = view.findViewById(R.id.profile_recycler_view);
@@ -241,12 +251,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            loadBookData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "FROM RESUME FAILURE", Toast.LENGTH_SHORT).show();
-        }
+//        try {
+//            loadBookData();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(getContext(), "FROM RESUME FAILURE", Toast.LENGTH_SHORT).show();
+//        }
     }
 
 
@@ -255,6 +265,14 @@ public class ProfileFragment extends Fragment {
 
         return new RecyclerViewFragment();
 
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view == logoutButton) {
+            Toast.makeText(getContext(), "Logout clicked", Toast.LENGTH_SHORT).show();
+            logOut();
+        }
     }
 
     private class RecyclerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -369,6 +387,59 @@ public class ProfileFragment extends Fragment {
 
     }
 
+    private void logOut() {
+
+        String s = "";
+        writeTokenToFile(s,getContext());
+        database.bookDao().deleteAll();
+        getActivity().finish();
+
+    }
+
+    private void writeTokenToFile(String token, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("userToken.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(token);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
+
+
+    private String readTokenFile(Context context) {
+        String token = "";
+
+        try {
+            InputStream inputStream = context.openFileInput("userToken.txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                token = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return token;
+    }
+
+
+
+
 
     //Factory methods for fragment
 
@@ -456,6 +527,8 @@ public class ProfileFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 
 
 }

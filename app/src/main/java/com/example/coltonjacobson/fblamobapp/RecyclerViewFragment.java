@@ -3,7 +3,6 @@ package com.example.coltonjacobson.fblamobapp;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,6 +29,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,26 +66,23 @@ public class RecyclerViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.recycler_view_fragment,container,false);
 
         //Room Database
-        database = Room.databaseBuilder(getContext(),AppDatabase.class, "main")
-                .allowMainThreadQueries()
-                .build();
+        database = ((mainActivity)getActivity()).getDatabase();
 
-        try {
-            loadData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
-        }
+//        try {
+//            loadData();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
+//        }
 
-        books = (ArrayList)database.bookDao().getAllBooks();
+        books = (ArrayList<Book>)database.bookDao().getAllBooks();
 
-        Toast.makeText(getContext(), getToken() + "before running loadUserInformation", Toast.LENGTH_SHORT).show();
-        try {
-            loadUserInformation();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "User information could not be loaded.", Toast.LENGTH_SHORT).show();
-        }
+//        try {
+//            loadUserInformation();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(getContext(), "User information could not be loaded.", Toast.LENGTH_SHORT).show();
+//        }
 
 
 
@@ -205,7 +207,7 @@ public class RecyclerViewFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String,String> header = new HashMap<String,String>();
                 header.put("Content-Type", "application/json");
-                header.put("Authorization", "Bearer " + getToken());
+                header.put("Authorization", "Bearer " + readTokenFile(getContext()));
                 return header;
             }
         };
@@ -216,22 +218,16 @@ public class RecyclerViewFragment extends Fragment {
 
     }
 
-    private String getToken() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userToken",Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("token","NO_TOKEN");
-        return token;
-
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        try {
-            loadData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Toast.makeText(getContext(), "FROM RESUME FAILURE", Toast.LENGTH_SHORT).show();
-        }
+//        try {
+//            loadData();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(getContext(), "FROM RESUME FAILURE", Toast.LENGTH_SHORT).show();
+//        }
     }
 
 
@@ -305,9 +301,11 @@ public class RecyclerViewFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerViewHolder holder, int position) {
 
+            String authors = books.get(position).getAuthors().toString();
+
             final String bookTitle = books.get(position).getTitle();
             final int bookImage = R.drawable.mockingjay_image;
-            final String bookAuthor = books.get(position).getAuthors().toString();
+            final String bookAuthor = authors.substring(1,authors.length()-1);
             final boolean isCheckedOut = books.get(position).isCheckedOut();
             final boolean isReserved = books.get(position).isReserved();
 
@@ -355,4 +353,35 @@ public class RecyclerViewFragment extends Fragment {
 
 
     }
+
+    private String readTokenFile(Context context) {
+        String token = "";
+
+        try {
+            InputStream inputStream = context.openFileInput("userToken.txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                token = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return token;
+    }
+
+
 }

@@ -35,7 +35,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/myReservationsText">
+
     </android.support.v7.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/sign_out_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_recycler_view2"
+        android:layout_centerHorizontal="true"
+        android:text="Log Out" />
 
 
 </RelativeLayout>
