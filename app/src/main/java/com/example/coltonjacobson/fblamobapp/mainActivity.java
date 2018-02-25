@@ -1,7 +1,8 @@
 package com.example.coltonjacobson.fblamobapp;
 
 import android.arch.persistence.room.Room;
-import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -18,11 +19,11 @@ import java.util.ArrayList;
 public class mainActivity extends BookListFragment implements MapFragment.OnFragmentInteractionListener,
         ProfileFragment.OnFragmentInteractionListener {
 
+
     @Override
     protected Fragment createFragment() {
         return new RecyclerViewFragment().newInstance();
     }
-
     ArrayList<Book> bookList;
     boolean DBAttempt;
     private TextView mTextMessage;
@@ -79,9 +80,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        Intent login = new Intent(mainActivity.this,LoginActivity.class);
-        startActivity(login);
 
         mTextMessage = (TextView) findViewById(R.id.message);
         //mLoading = (TextView) findViewById(R.id.loading_text_view);
@@ -120,6 +120,26 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
     }
 
+    private void storeToken(String token) {
+        SharedPreferences sharedPreferences = getSharedPreferences("com/example/coltonjacobson/fblamobapp/userToken", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("token",token);
+        editor.apply();
+    }
+
+    private void clearSharedPrefs() {
+        SharedPreferences sharedPreferences = getSharedPreferences("com/example/coltonjacobson/fblamobapp/userToken",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear().commit();
+
+    }
+
+    private String getToken() {
+        SharedPreferences sharedPreferences = getSharedPreferences("com/example/coltonjacobson/fblamobapp/userToken", Context.MODE_PRIVATE);
+        String token = sharedPreferences.getString("Token","NO_TOKEN");
+        return token;
+
+    }
 
 
 

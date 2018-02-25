@@ -217,7 +217,7 @@ public class RecyclerViewFragment extends Fragment {
     }
 
     private String getToken() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userToken",Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("com/example/coltonjacobson/fblamobapp/userToken",Context.MODE_PRIVATE);
         String token = sharedPreferences.getString("token","NO_TOKEN");
         return token;
 
