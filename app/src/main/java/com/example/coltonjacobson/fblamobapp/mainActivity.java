@@ -4,6 +4,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -33,9 +34,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.nio.channels.AsynchronousChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.Thread.sleep;
@@ -61,6 +65,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     RecyclerViewFragment recyclerViewFragment;
     ProfileFragment profileFragment;
     MapFragment mapFragment;
+    boolean isLoadDone;
+    String shouldBeDone;
 
     //Changes the fragment displayed on the screen to the one associated with each button
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -110,40 +116,62 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isLoadDone = false;
 
         setContentView(R.layout.activity_main);
 
-//        try {
-//            loadBookData();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            loadUserInformation();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+        database = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "main")
+                .fallbackToDestructiveMigration()
+                .allowMainThreadQueries()
+                .build();
+
+
+        try {
+            getBookData();
+            books = (ArrayList)database.bookDao().getAllBooks();
+            isLoadDone = getUserInformation();
+            for(Book b:books) {
+                Log.d(TAG, "doInBackground: " + b.isCheckedOut());
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        synchronized(this){
+            while (!readLoadDataFile(getApplicationContext()).equals("true")){
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        database = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "main")
-                .allowMainThreadQueries()
-                .build();
-
-        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);
-        allBooksLoader.execute();
-
-        Toast.makeText(this, database.bookDao().getBookByTitle("Ready Player One").toString(), Toast.LENGTH_LONG).show();
 
 
+
+//        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);
+//        try {
+//            allBooksLoader.execute().get();
+//            Log.d(TAG, "doInBackground: afterBooksLoader in main" );
+//            Log.d(TAG, "doInBackground:" + database.bookDao().getBookByTitle("Little Fires Everywhere").isCheckedOut() );
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (ExecutionException e) {
+//            e.printStackTrace();
+//        }
 
 
     }
 
 
-    public void loadBookData() throws JSONException {
+    //Loads all of the books from the database
+    public void getBookData() throws JSONException {
+
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL, new Response.Listener<String>() {
             @Override
@@ -155,13 +183,13 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                     JSONArray jsonArray = new JSONArray(response);
 
                     database.bookDao().deleteAll();
-                    bookList = Book.makeBookArrayList(getApplicationContext(),jsonArray,bookList);
-                    for(Book b:bookList) {
+                    bookList = Book.makeBookArrayList(getApplicationContext(), jsonArray, bookList);
+                    for (Book b : bookList) {
                         database.bookDao().insertBook(b);
                     }
 
 
-                } catch(JSONException e) {
+                } catch (JSONException e) {
 
                     e.printStackTrace();
                     Toast.makeText(getApplicationContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
@@ -183,7 +211,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
     }
 
-    public void loadUserInformation() throws JSONException{
+
+    public boolean getUserInformation() throws JSONException {
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, userInformationURL, new Response.Listener<String>() {
 
@@ -197,32 +226,49 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                     JSONArray reservations = jsonObject.getJSONArray("reservations");
                     JSONArray checkouts = jsonObject.getJSONArray("checkouts");
 
+                    books = (ArrayList)database.bookDao().getAllBooks();
+
                     for (int i = 0; i < checkouts.length(); i++) {
-                        Toast.makeText(getApplicationContext(), "Inside checkouts for-loop", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getApplicationContext(), books.get(1).toString(), Toast.LENGTH_SHORT).show();
                         for (Book b : books) {
-                            if (b.getId() == checkouts.getJSONObject(i).getInt("bookID") &&
+                            if (b.getBookID() == checkouts.getJSONObject(i).getInt("bookID") &&
                                     checkouts.getJSONObject(i).getBoolean("active")) {
-                                database.bookDao().getBookByTitle(b.getTitle()).setCheckedOut(true);
-                                Toast.makeText(getApplicationContext(), "Made checkout active", Toast.LENGTH_SHORT).show();
+                                b.setCheckedOut(true);//database.bookDao().getBookByID(b.getBookID()).setCheckedOut(true);
+                                Log.d(TAG, "doInBackGround: bookCheckoutSet" + b.getBookID());
                             }
                         }
                     }
+
                     for (int i = 0; i < reservations.length(); i++) {
                         for (Book b : books) {
-                            if (b.getId() == reservations.getJSONObject(i).getInt("bookID") &&
+                            if (b.getBookID() == reservations.getJSONObject(i).getInt("bookID") &&
                                     reservations.getJSONObject(i).getBoolean("active")) {
-                                database.bookDao().getBookByTitle(b.getTitle()).setReserved(true);
+                                b.setReserved(true);//database.bookDao().getBookByID(b.getBookID()).setReserved(true);
                             }
                         }
                     }
 
+                    database.bookDao().deleteAll();
+                    for(Book b:books) {
+                        database.bookDao().insertBook(b);
+                    }
 
-                } catch(JSONException e) {
+                    writeDataIsLoadedToFile("true",getApplicationContext());
+                    this.notifyAll();
+
+
+
+
+
+
+
+
+
+                } catch (JSONException e) {
 
                     e.printStackTrace();
                     Log.d(TAG, "FINDME: " + e);
                     Toast.makeText(getApplicationContext(), "JSON parse @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
+                    isLoadDone = true;
 
                 }
 
@@ -235,13 +281,13 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
                         Toast.makeText(getApplicationContext(), "loadData @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "FINDME: " + error);
+                        isLoadDone = true;
 
                     }
-                })
-        {
+                }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> header = new HashMap<String,String>();
+                Map<String, String> header = new HashMap<String, String>();
                 header.put("Content-Type", "application/json");
                 header.put("Authorization", "Bearer " + readTokenFile(getApplicationContext()));
                 return header;
@@ -250,8 +296,36 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
 
+        return true;
+    }
 
+    private String readLoadDataFile(Context context) {
+        String text = "";
 
+        try {
+            InputStream inputStream = context.openFileInput("isDataLoaded.txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                text = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("load activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("load activity", "Can not read file: " + e.toString());
+        }
+
+        return text;
     }
 
     private String readTokenFile(Context context) {
@@ -281,6 +355,17 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         }
 
         return token;
+    }
+
+    private void writeDataIsLoadedToFile(String isLoaded, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("isDataLoaded.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(isLoaded);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
     }
 
     private boolean loadFragment(Fragment fragment)  {

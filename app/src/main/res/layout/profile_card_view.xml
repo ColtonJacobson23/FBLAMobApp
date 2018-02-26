@@ -17,13 +17,13 @@
             android:id="@+id/profile_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="left"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:layout_toLeftOf="@+id/profile_image_view"
+            android:layout_below="@+id/profile_image_view"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textSize="20sp" />
+            android:textSize="16sp"
+            android:maxLines="2"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/profile_text_view2"
@@ -34,15 +34,18 @@
             android:layout_gravity="left"
             android:layout_margin="10dp"
             android:layout_marginTop="20dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/profile_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="10dp" />
+            android:layout_margin="10dp"
+            android:maxHeight="110dp"
+            android:maxWidth="90dp"/>
     </RelativeLayout>
 
 

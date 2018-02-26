@@ -7,4 +7,5 @@
     <dimen name="case_width">11dp</dimen>
     <dimen name="case_length">22dp</dimen>
     <dimen name="case_length_2">11dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

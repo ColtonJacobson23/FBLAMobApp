@@ -66,16 +66,24 @@ public class RecyclerViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.recycler_view_fragment,container,false);
 
+
         //Room Database
         database = ((mainActivity)getActivity()).getDatabase();
 
-        books = new ArrayList<Book>();
         try {
             Thread.sleep(500);
             books = (ArrayList<Book>)database.bookDao().getAllBooks();
+            for(Book b:books) {
+                Log.d(TAG, "doInBackground: bookIsCheckedOut: " + b.isCheckedOut());
+            }
+            Log.d(TAG, "doInBackground: after getting books in RecyclerView" );
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
+
+
 
 
 
@@ -100,7 +108,7 @@ public class RecyclerViewFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
-
+        Log.d(TAG, "doInBackground: after recyclerview is declared" );
 
 
         return view;
@@ -176,7 +184,7 @@ public class RecyclerViewFragment extends Fragment {
                         Toast.makeText(getContext(), "Inside checkouts for-loop", Toast.LENGTH_SHORT).show();
                         Toast.makeText(getContext(), books.get(1).toString(), Toast.LENGTH_SHORT).show();
                         for (Book b : books) {
-                            if (b.getId() == checkouts.getJSONObject(i).getInt("bookID") &&
+                            if (b.getBookID() == checkouts.getJSONObject(i).getInt("bookID") &&
                                     checkouts.getJSONObject(i).getBoolean("active")) {
                                 database.bookDao().getBookByTitle(b.getTitle()).setCheckedOut(true);
                                 Toast.makeText(getContext(), "Made checkout active", Toast.LENGTH_SHORT).show();
@@ -185,7 +193,7 @@ public class RecyclerViewFragment extends Fragment {
                     }
                     for (int i = 0; i < reservations.length(); i++) {
                         for (Book b : books) {
-                            if (b.getId() == reservations.getJSONObject(i).getInt("bookID") &&
+                            if (b.getBookID() == reservations.getJSONObject(i).getInt("bookID") &&
                                     reservations.getJSONObject(i).getBoolean("active")) {
                                 database.bookDao().getBookByTitle(b.getTitle()).setReserved(true);
                             }
@@ -393,6 +401,8 @@ public class RecyclerViewFragment extends Fragment {
 
         return token;
     }
+
+
 
     public void setBookList(ArrayList<Book> list) {
         books = list;

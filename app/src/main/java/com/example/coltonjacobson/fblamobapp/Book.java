@@ -21,8 +21,8 @@ import java.util.ArrayList;
 @Entity
 public class Book {
     //Variables are ordered based on their order in the database
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+    @PrimaryKey(autoGenerate = false)
+    private int bookID;
 
     @ColumnInfo(name = "book_title")
     private String title;
@@ -54,14 +54,7 @@ public class Book {
     private String ficID;
 
 
-
-
-
-    public Book() {
-        this(null,0,null,null,null,false, false, null,null);
-    }
-
-    public Book(String title, int pageCount, String base64Encoded, ArrayList<String> authors, String isbn, boolean reserved,
+    public Book(int bookID, String title, int pageCount, String base64Encoded, ArrayList<String> authors, String isbn, boolean reserved,
                 boolean checkedOut, String deweyDecimal, String ficID) {
 
         //Filler values to use for empty parameters
@@ -73,6 +66,8 @@ public class Book {
         String isbnB = "000-0000000000";
         String deweyDecimalB = "no dewey";
         String ficIDB = "no ficID";
+
+        this.bookID = bookID;
 
         //Replaces empty or null parameters with a filler value
         if(title== null || title.equals("")) {
@@ -171,7 +166,7 @@ public class Book {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 jsonObject = jsonArray.getJSONObject(i);
-                book = new Book(jsonObject.getString("title"),
+                book = new Book(jsonObject.getInt("bookID"),jsonObject.getString("title"),
                         jsonObject.getInt("pageCount"),
                         jsonObject.getJSONObject("cover").getString("base64Encoded"),
                         Book.makeAuthorList(jsonObject.getJSONArray("authors")),
@@ -193,12 +188,12 @@ public class Book {
 
     }
 
-    public int getId() {
-        return id;
+    public int getBookID() {
+        return bookID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(int bookID) {
+        this.bookID = bookID;
     }
 
     public void setTitle(String title) {

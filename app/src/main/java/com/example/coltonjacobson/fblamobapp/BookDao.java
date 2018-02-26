@@ -15,8 +15,8 @@ public interface BookDao {
     List<Book> getAllBooks();
 
     /* Not quite working */
-    @Query("SELECT * FROM Book where id = :id")
-    Book getBookByID(int id);
+    @Query("SELECT * FROM Book where bookID = :bookID")
+    Book getBookByID(int bookID);
 
     @Query("SELECT * FROM Book where book_title = :title")
     Book getBookByTitle(String title);

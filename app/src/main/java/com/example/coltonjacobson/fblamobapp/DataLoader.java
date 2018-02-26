@@ -69,8 +69,10 @@ public class DataLoader {
 
              try {
                  getBookData();
+                 Log.d(TAG, "doInBackground: after getbook data" );
                  books = (ArrayList<Book>) database.bookDao().getAllBooks();
                  getUserInformation();
+                 Log.d(TAG, "doInBackground: after getuser data" );
              } catch (JSONException e) {
                  e.printStackTrace();
              }
@@ -87,7 +89,12 @@ public class DataLoader {
 
          @Override
          protected void onPostExecute(Void aVoid) {
-             super.onPostExecute(aVoid);
+             Log.d(TAG, "doInBackground: onPostExecute" );
+             try {
+                 getUserInformation();
+             } catch (JSONException e) {
+                 e.printStackTrace();
+             }
              Toast.makeText(context, "Data has been loaded!", Toast.LENGTH_LONG).show();
          }
 
@@ -133,6 +140,7 @@ public class DataLoader {
 
          }
 
+
          //Gets all of a user's checkouts and reservations, and get user identification info
          public void getUserInformation() throws JSONException {
 
@@ -150,9 +158,9 @@ public class DataLoader {
 
                          for (int i = 0; i < checkouts.length(); i++) {
                              for (Book b : books) {
-                                 if (b.getId() == checkouts.getJSONObject(i).getInt("bookID") &&
+                                 if (b.getBookID() == checkouts.getJSONObject(i).getInt("bookID") &&
                                          checkouts.getJSONObject(i).getBoolean("active")) {
-                                     database.bookDao().getBookByTitle(b.getTitle()).setCheckedOut(true);
+                                     b.setCheckedOut(true);//database.bookDao().getBookByID(b.getBookID()).setCheckedOut(true);
                                      Toast.makeText(context, "Made checkout active", Toast.LENGTH_SHORT).show();
                                  }
                              }
@@ -160,12 +168,22 @@ public class DataLoader {
 
                          for (int i = 0; i < reservations.length(); i++) {
                              for (Book b : books) {
-                                 if (b.getId() == reservations.getJSONObject(i).getInt("bookID") &&
+                                 if (b.getBookID() == reservations.getJSONObject(i).getInt("bookID") &&
                                          reservations.getJSONObject(i).getBoolean("active")) {
-                                     database.bookDao().getBookByTitle(b.getTitle()).setReserved(true);
+                                     b.setReserved(true);//database.bookDao().getBookByID(b.getBookID()).setReserved(true);
                                  }
                              }
                          }
+
+                         database.bookDao().deleteAll();
+                         for(Book b:books) {
+                             database.bookDao().insertBook(b);
+                         }
+
+
+
+
+
 
 
                      } catch (JSONException e) {
