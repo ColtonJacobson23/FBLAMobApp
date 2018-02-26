@@ -65,8 +65,11 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     RecyclerViewFragment recyclerViewFragment;
     ProfileFragment profileFragment;
     MapFragment mapFragment;
+<<<<<<< HEAD
     boolean isLoadDone;
     String shouldBeDone;
+=======
+>>>>>>> parent of a790d91... Revert "Good Version"
 
     //Changes the fragment displayed on the screen to the one associated with each button
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -120,6 +123,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
         setContentView(R.layout.activity_main);
 
+<<<<<<< HEAD
         database = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "main")
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
@@ -146,12 +150,32 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                 }
             }
         }
+=======
+//        try {
+//            loadBookData();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            loadUserInformation();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+>>>>>>> parent of a790d91... Revert "Good Version"
 
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+<<<<<<< HEAD
+=======
+        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);
+        allBooksLoader.execute();
+
+        Toast.makeText(this, database.bookDao().getBookByTitle("Ready Player One").toString(), Toast.LENGTH_LONG).show();
+>>>>>>> parent of a790d91... Revert "Good Version"
 
 
 //        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);

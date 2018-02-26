@@ -70,6 +70,7 @@ public class RecyclerViewFragment extends Fragment {
         //Room Database
         database = ((mainActivity)getActivity()).getDatabase();
 
+<<<<<<< HEAD
         try {
             Thread.sleep(500);
             books = (ArrayList<Book>)database.bookDao().getAllBooks();
@@ -77,16 +78,25 @@ public class RecyclerViewFragment extends Fragment {
                 Log.d(TAG, "doInBackground: bookIsCheckedOut: " + b.isCheckedOut());
             }
             Log.d(TAG, "doInBackground: after getting books in RecyclerView" );
+=======
+        books = new ArrayList<Book>();
+        try {
+            Thread.sleep(500);
+            books = (ArrayList<Book>)database.bookDao().getAllBooks();
+>>>>>>> parent of a790d91... Revert "Good Version"
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
 
 
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> parent of a790d91... Revert "Good Version"
 //        try {
 //            loadData();
 //        } catch (JSONException e) {
@@ -400,6 +410,10 @@ public class RecyclerViewFragment extends Fragment {
         }
 
         return token;
+    }
+
+    public void setBookList(ArrayList<Book> list) {
+        books = list;
     }
 
 
