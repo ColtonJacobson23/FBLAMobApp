@@ -4,6 +4,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -68,6 +69,16 @@ public class RecyclerViewFragment extends Fragment {
         //Room Database
         database = ((mainActivity)getActivity()).getDatabase();
 
+        books = new ArrayList<Book>();
+        try {
+            Thread.sleep(500);
+            books = (ArrayList<Book>)database.bookDao().getAllBooks();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+
 //        try {
 //            loadData();
 //        } catch (JSONException e) {
@@ -75,7 +86,7 @@ public class RecyclerViewFragment extends Fragment {
 //            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
 //        }
 
-        books = (ArrayList<Book>)database.bookDao().getAllBooks();
+
 
 //        try {
 //            loadUserInformation();
@@ -381,6 +392,10 @@ public class RecyclerViewFragment extends Fragment {
         }
 
         return token;
+    }
+
+    public void setBookList(ArrayList<Book> list) {
+        books = list;
     }
 
 

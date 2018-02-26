@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.content.ContentValues.TAG;
+import static java.lang.Thread.sleep;
 
 
 public class mainActivity extends BookListFragment implements MapFragment.OnFragmentInteractionListener,
@@ -57,6 +58,9 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     String postURL = "https://fblamobileapp.azurewebsites.net/user/login";
     String userInformationURL= "https://fblamobileapp.azurewebsites.net/user/info";
     ArrayList<Book> books;
+    RecyclerViewFragment recyclerViewFragment;
+    ProfileFragment profileFragment;
+    MapFragment mapFragment;
 
     //Changes the fragment displayed on the screen to the one associated with each button
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -70,10 +74,10 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
                 //Main fragment with RecyclerView
                 case R.id.navigation_home:
-                    RecyclerViewFragment fragment = new RecyclerViewFragment();
+                    recyclerViewFragment = new RecyclerViewFragment();
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     android.support.v4.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.replace(R.id.recyclerViewContainer,fragment,"FragmentName");
+                    fragmentTransaction.replace(R.id.recyclerViewContainer,recyclerViewFragment,"FragmentName");
                     fragmentTransaction.commit();
 
                     setTitle("Home");
@@ -82,18 +86,18 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                 //The Profile fragment
                 case R.id.navigation_dashboard:
                     setTitle("My Profile");
-                    ProfileFragment fragment2 = new ProfileFragment();
+                    ProfileFragment profileFragment = new ProfileFragment();
                     android.support.v4.app.FragmentTransaction fragmentTransaction2 = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction2.replace(R.id.recyclerViewContainer,fragment2,"FragmentName");
+                    fragmentTransaction2.replace(R.id.recyclerViewContainer,profileFragment,"FragmentName");
                     fragmentTransaction2.commit();
                     return true;
 
                 //The Help fragment
                 case R.id.navigation_notifications:
                     setTitle("Help");
-                    MapFragment fragment3 = new MapFragment();
+                    MapFragment mapFragment = new MapFragment();
                     android.support.v4.app.FragmentTransaction fragmentTransaction3 = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction3.replace(R.id.recyclerViewContainer,fragment3,"FragmentName");
+                    fragmentTransaction3.replace(R.id.recyclerViewContainer,mapFragment,"FragmentName");
                     fragmentTransaction3.commit();
                     return true;
             }
@@ -109,17 +113,17 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
         setContentView(R.layout.activity_main);
 
-        try {
-            loadBookData();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            loadUserInformation();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            loadBookData();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        try {
+//            loadUserInformation();
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -128,7 +132,10 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                 .allowMainThreadQueries()
                 .build();
 
-        books = (ArrayList)database.bookDao().getAllBooks();
+        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);
+        allBooksLoader.execute();
+
+        Toast.makeText(this, database.bookDao().getBookByTitle("Ready Player One").toString(), Toast.LENGTH_LONG).show();
 
 
 
@@ -297,5 +304,13 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
     public AppDatabase getDatabase() {
         return database;
+    }
+
+    public ProfileFragment getProfileFragment() {
+        return profileFragment;
+    }
+
+    public RecyclerViewFragment getRecyclerViewFragment() {
+        return recyclerViewFragment;
     }
 }

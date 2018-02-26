@@ -165,6 +165,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     JSONArray jsonArray;
     ArrayList<Book> bookList;
     Button logoutButton;
+    ArrayList<Book> books;
 
 
     @Nullable
@@ -177,7 +178,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         //Room Database
         database = ((mainActivity)getActivity()).getDatabase();
-        ArrayList<Book> books = (ArrayList<Book>) database.bookDao().getAllBooks();
+        try {
+            Thread.sleep(500);
+            books = (ArrayList<Book>)database.bookDao().getAllBooks();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 //        //Makes a simple request for all book information in the Simple Endpoint
 //        try {
@@ -526,6 +532,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void setBookList(ArrayList<Book> list) {
+        books = list;
     }
 
 
