@@ -29,7 +29,6 @@ public class Book {
     @ColumnInfo(name = "book_pageCount")
     private int pageCount;
 
-
     @ColumnInfo(name = "book_imagePath")
     //Founds inside the cover object
     private String imagePath;
@@ -37,6 +36,10 @@ public class Book {
     @ColumnInfo(name = "book_authors")
     //Could be more than one author
     private ArrayList<String> authors;
+
+    @ColumnInfo(name = "book_description")
+    //Founds inside the cover object
+    private String description;
 
     @ColumnInfo(name = "book_isbn")
     private String isbn;
@@ -66,9 +69,11 @@ public class Book {
      * @param checkedOut   the checked out
      * @param deweyDecimal the dewey decimal
      * @param ficID        the fic id
+     * @param imagePath    the image path
+     * @param description  the description
      */
     public Book(int bookID, String title, int pageCount, ArrayList<String> authors, String isbn, boolean reserved,
-                boolean checkedOut, String deweyDecimal, String ficID, String imagePath) {
+                boolean checkedOut, String deweyDecimal, String ficID, String imagePath, String description) {
 
         //Filler values to use for empty parameters
         String titleB = "no title";
@@ -80,6 +85,7 @@ public class Book {
         String deweyDecimalB = "no dewey";
         String ficIDB = "no ficID";
         this.imagePath = imagePath;
+        this.description = description;
 
         this.bookID = bookID;
 
@@ -173,8 +179,9 @@ public class Book {
                 + "\nisbn: " + isbn
                 + "\nReserved: " + reserved
                 + "\nCheckedout: " + checkedOut
-                + "\nB64Encoded: " + imagePath
-                + "\nficID: " + ficID;
+                + "\nImagePath: " + imagePath
+                + "\nficID: " + ficID
+                + "\nDescription: " + description;
     }
 
     /**
@@ -204,7 +211,8 @@ public class Book {
                         false,
                         jsonObject.getString("deweyDecimal"),
                         jsonObject.getString("ficID"),
-                        jsonObject.getString("imagePath"));
+                        jsonObject.getString("imagePath"),
+                        jsonObject.getString("description"));
                 bookList.add(book);
             } catch (JSONException e) {
 
@@ -380,11 +388,39 @@ public class Book {
         return ficID;
     }
 
+    /**
+     * Gets image path.
+     *
+     * @return the image path
+     */
     public String getImagePath() {
         return imagePath;
     }
 
+    /**
+     * Sets image path.
+     *
+     * @param imagePath the image path
+     */
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    /**
+     * Gets description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets description.
+     *
+     * @param description the description
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

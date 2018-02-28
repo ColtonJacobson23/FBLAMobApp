@@ -276,13 +276,19 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         }
 
         @Override
-        public void onBindViewHolder(RecyclerViewHolder holder, int position) {
+        public void onBindViewHolder(ProfileFragment.RecyclerViewHolder holder, int position) {
 
+            String authors = books.get(position).getAuthors().toString();
+
+            final int bookID = books.get(position).getBookID();
             final String bookTitle = books.get(position).getTitle();
             final int bookImage = R.drawable.mockingjay_image;
-            final String bookAuthor = books.get(position).getAuthors().toString();
+            final String bookAuthor = authors.substring(1,authors.length()-1);
             final boolean isCheckedOut = books.get(position).isCheckedOut();
             final boolean isReserved = books.get(position).isReserved();
+            final String imagePath = books.get(position).getImagePath();
+            final String description = books.get(position).getDescription();
+
 
             holder.mBookName.setText(bookTitle);
             holder.mImageView.setImageResource(bookImage);
@@ -293,7 +299,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 public void onClick(View view, int position, boolean isLongClick) {
 
                     Toast.makeText(cText, "You clicked " + bookTitle,Toast.LENGTH_LONG).show();
-                    openBookDetailActivity(bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position);
+                    openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position,imagePath, description);
 
 
                 }
@@ -307,7 +313,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             return books.size();
         }
 
-        private void openBookDetailActivity(String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position) {
+
+        private void openBookDetailActivity(int bookID, String bookName, int image,String bookAuthor,boolean isCheckedOut,
+                                            boolean isReserved,int position, String imagePath, String description) {
 
             Intent intent = new Intent(cText, BookDetailActivity.class);
 
@@ -315,9 +323,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             intent.putExtra("BOOK_NAME", bookName);
             intent.putExtra("BOOK_IMAGE", image );
             intent.putExtra("BOOK_AUTHOR",bookAuthor);
-            intent.putExtra("BOOK_CHECKEDOUT",isCheckedOut);
-            intent.putExtra("BOOK_RESERVED",isReserved);
             intent.putExtra("POSITION",position);
+            intent.putExtra("BOOK_IMAGEPATH",imagePath);
+            intent.putExtra("BOOK_DESCRIPTION", description);
+            intent.putExtra("BOOK_CHECKEDOUT",isCheckedOut);
+            intent.putExtra("BOOK_RESERVED",isCheckedOut);
 
 
             //Start my activity

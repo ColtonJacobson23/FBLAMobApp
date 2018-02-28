@@ -96,6 +96,10 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
      */
     String imagePath;
 
+    String description;
+
+    TextView descriptionText;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -109,6 +113,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         checkoutBtn = findViewById(R.id.button_checkOut);
         reserveBtn = findViewById(R.id.button_reserve);
         mapContainer = findViewById(R.id.map_container);
+        descriptionText = findViewById(R.id.textView_book_description);
 
         MapFragment fragment = new MapFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -125,6 +130,8 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         boolean isReserved = intent.getExtras().getBoolean("BOOK_RESERVED");
         position = intent.getExtras().getInt("POSITION");
         imagePath = intent.getExtras().getString("BOOK_IMAGEPATH");
+        description = intent.getExtras().getString("BOOK_DESCRIPTION");
+
 
 
 
@@ -141,6 +148,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         bookNameText.setText(bookName);
         bookAuthorText.setText(bookAuthor);
         bookImageView.setImageResource(imageID);
+        descriptionText.setText(description);
 
         if (isCheckedOut) {
             checkoutBtn.setText("Check In");
@@ -262,6 +270,12 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
             }
         }
         return false;
+    }
+
+    public void onBackToMain(View view) {
+
+        onBackPressed();
+
     }
 
 

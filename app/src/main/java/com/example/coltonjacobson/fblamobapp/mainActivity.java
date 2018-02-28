@@ -135,7 +135,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
                 //The Help fragment
                 case R.id.navigation_notifications:
-                    setTitle("Help");
+                    setTitle("Map");
                     MapFragment mapFragment = new MapFragment();
                     android.support.v4.app.FragmentTransaction fragmentTransaction3 = getSupportFragmentManager().beginTransaction();
                     fragmentTransaction3.replace(R.id.recyclerViewContainer,mapFragment,"FragmentName");
@@ -172,19 +172,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-
-
-//        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);
-//        try {
-//            allBooksLoader.execute().get();
-//            Log.d(TAG, "doInBackground: afterBooksLoader in main" );
-//            Log.d(TAG, "doInBackground:" + database.bookDao().getBookByTitle("Little Fires Everywhere").isCheckedOut() );
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
 
 
     }
@@ -236,6 +223,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         requestQueue.add(stringRequest);
 
     }
+
+
 
 
     private String readTokenFile(Context context) {

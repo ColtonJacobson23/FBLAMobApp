@@ -360,6 +360,7 @@ public class RecyclerViewFragment extends Fragment {
             final boolean isCheckedOut = books.get(position).isCheckedOut();
             final boolean isReserved = books.get(position).isReserved();
             final String imagePath = books.get(position).getImagePath();
+            final String description = books.get(position).getDescription();
 
 
             holder.mBookName.setText(bookTitle);
@@ -371,7 +372,7 @@ public class RecyclerViewFragment extends Fragment {
                 public void onClick(View view, int position, boolean isLongClick) {
 
                     Toast.makeText(cText, "You clicked " + bookTitle,Toast.LENGTH_LONG).show();
-                    openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position,imagePath);
+                    openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position,imagePath, description);
 
 
                 }
@@ -385,7 +386,8 @@ public class RecyclerViewFragment extends Fragment {
             return books.size();
         }
 
-        private void openBookDetailActivity(int bookID, String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position, String imagePath) {
+        private void openBookDetailActivity(int bookID, String bookName, int image,String bookAuthor,boolean isCheckedOut,
+                                            boolean isReserved,int position, String imagePath, String description) {
 
             Intent intent = new Intent(cText, BookDetailActivity.class);
 
@@ -393,10 +395,11 @@ public class RecyclerViewFragment extends Fragment {
             intent.putExtra("BOOK_NAME", bookName);
             intent.putExtra("BOOK_IMAGE", image );
             intent.putExtra("BOOK_AUTHOR",bookAuthor);
-            intent.putExtra("BOOK_CHECKEDOUT",isCheckedOut);
-            intent.putExtra("BOOK_RESERVED",isReserved);
             intent.putExtra("POSITION",position);
             intent.putExtra("BOOK_IMAGEPATH",imagePath);
+            intent.putExtra("BOOK_DESCRIPTION", description);
+            intent.putExtra("BOOK_CHECKEDOUT",isCheckedOut);
+            intent.putExtra("BOOK_RESERVED",isCheckedOut);
 
 
             //Start my activity
