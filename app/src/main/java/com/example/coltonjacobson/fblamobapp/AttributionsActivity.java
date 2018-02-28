@@ -18,7 +18,7 @@ public class AttributionsActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    public void onBackClicked() {
+    public void onBackClicked(View view) {
 
         onBackPressed();
     }
