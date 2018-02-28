@@ -65,32 +65,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         //Room Database
         database = ((mainActivity)getActivity()).getDatabase();
-<<<<<<< HEAD
         Log.d(TAG, "doInBackground: after Profile frag is declared" );
-=======
->>>>>>> parent of a790d91... Revert "Good Version"
+
         try {
             Thread.sleep(500);
             books = (ArrayList<Book>)database.bookDao().getAllBooks();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-<<<<<<< HEAD
 
-
-
-
-
-=======
->>>>>>> parent of a790d91... Revert "Good Version"
-
-//        //Makes a simple request for all book information in the Simple Endpoint
-//        try {
-//            loadBookData();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
-//        }
 
 
         RecyclerView checkoutsRecyclerView = view.findViewById(R.id.profile_recycler_view);

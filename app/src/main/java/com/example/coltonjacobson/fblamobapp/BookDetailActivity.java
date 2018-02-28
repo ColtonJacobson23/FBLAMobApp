@@ -2,7 +2,9 @@ package com.example.coltonjacobson.fblamobapp;
 
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomMasterTable;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.Image;
 import android.net.Uri;
 import android.nfc.Tag;
@@ -21,7 +23,14 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 import static android.content.ContentValues.TAG;
+import static android.graphics.Bitmap.CompressFormat.PNG;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
@@ -38,6 +47,8 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
     int position;
     AppDatabase database;
     ArrayList<Book> books;
+    String base64String;
+    Bitmap coverImageBitmap;
 
 
     @Override
@@ -48,7 +59,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
 
         bookNameText = findViewById(R.id.textView_book_name);
         bookAuthorText = findViewById(R.id.textView_author);
-        bookImageView = findViewById(R.id.imageView);
+        bookImageView = (ImageView)findViewById(R.id.imageView);
         checkoutBtn = findViewById(R.id.button_checkOut);
         reserveBtn = findViewById(R.id.button_reserve);
         mapContainer = findViewById(R.id.map_container);
@@ -73,6 +84,12 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         boolean isCheckedOut = intent.getExtras().getBoolean("BOOK_CHECKEDOUT");
         boolean isReserved = intent.getExtras().getBoolean("BOOK_RESERVED");
         position = intent.getExtras().getInt("POSITION");
+
+        base64String = readBase64File(getApplicationContext());
+        coverImageBitmap = Book.toBitmap(getApplicationContext(),base64String);
+        Toast.makeText(this, "About to set bitmap", Toast.LENGTH_SHORT).show();
+        
+        bookImageView.setImageResource();
 
         //Binds data
         bookNameText.setText(bookName);
@@ -123,5 +140,34 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    private String readBase64File(Context context) {
+        String base64String = "";
+
+        try {
+            InputStream inputStream = context.openFileInput("base64Text.txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                base64String = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return base64String;
     }
 }

@@ -65,11 +65,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     RecyclerViewFragment recyclerViewFragment;
     ProfileFragment profileFragment;
     MapFragment mapFragment;
-<<<<<<< HEAD
-    boolean isLoadDone;
-    String shouldBeDone;
-=======
->>>>>>> parent of a790d91... Revert "Good Version"
 
     //Changes the fragment displayed on the screen to the one associated with each button
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -119,11 +114,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        isLoadDone = false;
 
         setContentView(R.layout.activity_main);
-
-<<<<<<< HEAD
         database = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "main")
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
@@ -133,7 +125,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         try {
             getBookData();
             books = (ArrayList)database.bookDao().getAllBooks();
-            isLoadDone = getUserInformation();
             for(Book b:books) {
                 Log.d(TAG, "doInBackground: " + b.isCheckedOut());
             }
@@ -141,41 +132,10 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
             e.printStackTrace();
         }
 
-        synchronized(this){
-            while (!readLoadDataFile(getApplicationContext()).equals("true")){
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-=======
-//        try {
-//            loadBookData();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            loadUserInformation();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
->>>>>>> parent of a790d91... Revert "Good Version"
-
-
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-<<<<<<< HEAD
-=======
-        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);
-        allBooksLoader.execute();
-
-        Toast.makeText(this, database.bookDao().getBookByTitle("Ready Player One").toString(), Toast.LENGTH_LONG).show();
->>>>>>> parent of a790d91... Revert "Good Version"
 
 
 //        DataLoader.AllBooksLoader allBooksLoader = new DataLoader.AllBooksLoader(getApplicationContext(),database,getURL,userInformationURL);
@@ -236,122 +196,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     }
 
 
-    public boolean getUserInformation() throws JSONException {
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, userInformationURL, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                //Attempt to get JSON objects for books checked out and books reserved
-                try {
-
-                    //Getting checkouts, renewals, and reservations
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray reservations = jsonObject.getJSONArray("reservations");
-                    JSONArray checkouts = jsonObject.getJSONArray("checkouts");
-
-                    books = (ArrayList)database.bookDao().getAllBooks();
-
-                    for (int i = 0; i < checkouts.length(); i++) {
-                        for (Book b : books) {
-                            if (b.getBookID() == checkouts.getJSONObject(i).getInt("bookID") &&
-                                    checkouts.getJSONObject(i).getBoolean("active")) {
-                                b.setCheckedOut(true);//database.bookDao().getBookByID(b.getBookID()).setCheckedOut(true);
-                                Log.d(TAG, "doInBackGround: bookCheckoutSet" + b.getBookID());
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < reservations.length(); i++) {
-                        for (Book b : books) {
-                            if (b.getBookID() == reservations.getJSONObject(i).getInt("bookID") &&
-                                    reservations.getJSONObject(i).getBoolean("active")) {
-                                b.setReserved(true);//database.bookDao().getBookByID(b.getBookID()).setReserved(true);
-                            }
-                        }
-                    }
-
-                    database.bookDao().deleteAll();
-                    for(Book b:books) {
-                        database.bookDao().insertBook(b);
-                    }
-
-                    writeDataIsLoadedToFile("true",getApplicationContext());
-                    this.notifyAll();
-
-
-
-
-
-
-
-
-
-                } catch (JSONException e) {
-
-                    e.printStackTrace();
-                    Log.d(TAG, "FINDME: " + e);
-                    Toast.makeText(getApplicationContext(), "JSON parse @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
-                    isLoadDone = true;
-
-                }
-
-            }
-
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        Toast.makeText(getApplicationContext(), "loadData @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "FINDME: " + error);
-                        isLoadDone = true;
-
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> header = new HashMap<String, String>();
-                header.put("Content-Type", "application/json");
-                header.put("Authorization", "Bearer " + readTokenFile(getApplicationContext()));
-                return header;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestQueue.add(stringRequest);
-
-        return true;
-    }
-
-    private String readLoadDataFile(Context context) {
-        String text = "";
-
-        try {
-            InputStream inputStream = context.openFileInput("isDataLoaded.txt");
-
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
-                    stringBuilder.append(receiveString);
-                }
-
-                inputStream.close();
-                text = stringBuilder.toString();
-            }
-        }
-        catch (FileNotFoundException e) {
-            Log.e("load activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("load activity", "Can not read file: " + e.toString());
-        }
-
-        return text;
-    }
-
     private String readTokenFile(Context context) {
         String token = "";
 
@@ -381,25 +225,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
         return token;
     }
 
-    private void writeDataIsLoadedToFile(String isLoaded, Context context) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("isDataLoaded.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(isLoaded);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
-    private boolean loadFragment(Fragment fragment)  {
-
-        if(fragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.recyclerViewContainer,fragment).commit();
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public void onBackPressed() {

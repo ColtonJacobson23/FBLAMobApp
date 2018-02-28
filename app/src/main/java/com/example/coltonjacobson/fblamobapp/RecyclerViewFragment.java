@@ -70,49 +70,16 @@ public class RecyclerViewFragment extends Fragment {
         //Room Database
         database = ((mainActivity)getActivity()).getDatabase();
 
-<<<<<<< HEAD
         try {
             Thread.sleep(500);
-            books = (ArrayList<Book>)database.bookDao().getAllBooks();
-            for(Book b:books) {
+            books = (ArrayList<Book>) database.bookDao().getAllBooks();
+            for (Book b : books) {
                 Log.d(TAG, "doInBackground: bookIsCheckedOut: " + b.isCheckedOut());
             }
-            Log.d(TAG, "doInBackground: after getting books in RecyclerView" );
-=======
-        books = new ArrayList<Book>();
-        try {
-            Thread.sleep(500);
-            books = (ArrayList<Book>)database.bookDao().getAllBooks();
->>>>>>> parent of a790d91... Revert "Good Version"
+            Log.d(TAG, "doInBackground: after getting books in RecyclerView");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
-
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> parent of a790d91... Revert "Good Version"
-//        try {
-//            loadData();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Toast.makeText(getContext(), "Data could not be loaded.", Toast.LENGTH_SHORT).show();
-//        }
-
-
-
-//        try {
-//            loadUserInformation();
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Toast.makeText(getContext(), "User information could not be loaded.", Toast.LENGTH_SHORT).show();
-//        }
-
 
 
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -332,11 +299,13 @@ public class RecyclerViewFragment extends Fragment {
 
             String authors = books.get(position).getAuthors().toString();
 
+            final int bookID = books.get(position).getBookID();
             final String bookTitle = books.get(position).getTitle();
             final int bookImage = R.drawable.mockingjay_image;
             final String bookAuthor = authors.substring(1,authors.length()-1);
             final boolean isCheckedOut = books.get(position).isCheckedOut();
             final boolean isReserved = books.get(position).isReserved();
+
 
             holder.mBookName.setText(bookTitle);
             holder.mImageView.setImageResource(bookImage);
@@ -347,7 +316,7 @@ public class RecyclerViewFragment extends Fragment {
                 public void onClick(View view, int position, boolean isLongClick) {
 
                     Toast.makeText(cText, "You clicked " + bookTitle,Toast.LENGTH_LONG).show();
-                    openBookDetailActivity(bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position);
+                    openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position);
 
 
                 }
@@ -361,9 +330,10 @@ public class RecyclerViewFragment extends Fragment {
             return books.size();
         }
 
-        private void openBookDetailActivity(String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position) {
+        private void openBookDetailActivity(int bookID, String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position) {
 
             Intent intent = new Intent(cText, BookDetailActivity.class);
+            writeBase64ToFile(books.get(position).getBase64Encoded(),getContext());
 
             //Get data ready to send
             intent.putExtra("BOOK_NAME", bookName);
@@ -412,15 +382,21 @@ public class RecyclerViewFragment extends Fragment {
         return token;
     }
 
-    public void setBookList(ArrayList<Book> list) {
-        books = list;
-    }
-
-
 
     public void setBookList(ArrayList<Book> list) {
         books = list;
     }
 
+
+    private void writeBase64ToFile(String base64String, Context context) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("base64Text.txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(base64String);
+            outputStreamWriter.close();
+        }
+        catch (IOException e) {
+            Log.e("Exception", "File write failed: " + e.toString());
+        }
+    }
 
 }
