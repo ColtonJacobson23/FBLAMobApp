@@ -44,14 +44,31 @@ import static android.content.ContentValues.TAG;
 /**
  * Created by colto on 1/12/2018.
  */
-
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
+    /**
+     * The Get url.
+     */
     String getURL = "https://fblamobileapp.azurewebsites.net/simple/books";
+    /**
+     * The Database.
+     */
     AppDatabase database;
+    /**
+     * The Json array.
+     */
     JSONArray jsonArray;
+    /**
+     * The Book list.
+     */
     ArrayList<Book> bookList;
+    /**
+     * The Logout button.
+     */
     Button logoutButton;
+    /**
+     * The Books.
+     */
     ArrayList<Book> books;
 
 
@@ -101,6 +118,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    /**
+     * Load book data.
+     *
+     * @throws JSONException the json exception
+     */
     public void loadBookData() throws JSONException{
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL, new Response.Listener<String>() {
@@ -154,7 +176,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
+    /**
+     * New instance fragment.
+     *
+     * @return the fragment
+     */
     public static Fragment newInstance() {
 
         return new RecyclerViewFragment();
@@ -177,10 +203,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         private ImageView mImageView;
         private ItemClickListener itemClickListener;
 
+        /**
+         * Instantiates a new Recycler view holder.
+         *
+         * @param itemView the item view
+         */
         public RecyclerViewHolder(View itemView) {
             super(itemView);
         }
 
+        /**
+         * Instantiates a new Recycler view holder.
+         *
+         * @param layoutInflater the layout inflater
+         * @param container      the container
+         */
         public RecyclerViewHolder(LayoutInflater layoutInflater, ViewGroup container) {
 
             super(layoutInflater.inflate(R.layout.profile_card_view,container,false));
@@ -194,6 +231,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         }
 
+        /**
+         * Sets item click listener.
+         *
+         * @param itemClickListener the item click listener
+         */
         public void setItemClickListener(ItemClickListener itemClickListener) {
 
             this.itemClickListener = itemClickListener;
@@ -213,6 +255,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         private Context cText;
         private List<Book> books;
 
+        /**
+         * Instantiates a new Recycler view adapter.
+         *
+         * @param books   the books
+         * @param context the context
+         */
         public RecyclerViewAdapter(List<Book> books, Context context) {
 
             this.cText = context;
@@ -350,6 +398,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private OnFragmentInteractionListener mListener;
 
+    /**
+     * Instantiates a new Profile fragment.
+     */
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -362,7 +413,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
      * @param param2 Parameter 2.
      * @return A new instance of fragment ProfileFragment.
      */
-    // TODO: Rename and change types and number of parameters
+// TODO: Rename and change types and number of parameters
     public static ProfileFragment newInstance(String param1, String param2) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -383,7 +434,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
+    /**
+     * On button pressed.
+     *
+     * @param uri the uri
+     */
+// TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -418,10 +474,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+        /**
+         * On fragment interaction.
+         *
+         * @param uri the uri
+         */
+// TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * Sets book list.
+     *
+     * @param list the list
+     */
     public void setBookList(ArrayList<Book> list) {
         books = list;
     }

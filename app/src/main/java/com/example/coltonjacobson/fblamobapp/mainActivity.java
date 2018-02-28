@@ -45,6 +45,9 @@ import static android.content.ContentValues.TAG;
 import static java.lang.Thread.sleep;
 
 
+/**
+ * The type Main activity.
+ */
 public class mainActivity extends BookListFragment implements MapFragment.OnFragmentInteractionListener,
         ProfileFragment.OnFragmentInteractionListener {
 
@@ -53,17 +56,51 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     protected Fragment createFragment() {
         return new RecyclerViewFragment().newInstance();
     }
+
+    /**
+     * The Book list.
+     */
     ArrayList<Book> bookList;
+    /**
+     * The Db attempt.
+     */
     boolean DBAttempt;
     private TextView mTextMessage;
+    /**
+     * The M loading.
+     */
     TextView mLoading;
+    /**
+     * The Database.
+     */
     AppDatabase database;
+    /**
+     * The Get url.
+     */
     String getURL = "https://fblamobileapp.azurewebsites.net/simple/books";
+    /**
+     * The Post url.
+     */
     String postURL = "https://fblamobileapp.azurewebsites.net/user/login";
+    /**
+     * The User information url.
+     */
     String userInformationURL= "https://fblamobileapp.azurewebsites.net/user/info";
+    /**
+     * The Books.
+     */
     ArrayList<Book> books;
+    /**
+     * The Recycler view fragment.
+     */
     RecyclerViewFragment recyclerViewFragment;
+    /**
+     * The Profile fragment.
+     */
     ProfileFragment profileFragment;
+    /**
+     * The Map fragment.
+     */
     MapFragment mapFragment;
 
     //Changes the fragment displayed on the screen to the one associated with each button
@@ -153,7 +190,12 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
     }
 
 
-    //Loads all of the books from the database
+    /**
+     * Gets book data.
+     *
+     * @throws JSONException the json exception
+     */
+//Loads all of the books from the database
     public void getBookData() throws JSONException {
 
 
@@ -236,14 +278,29 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
     }
 
+    /**
+     * Gets database.
+     *
+     * @return the database
+     */
     public AppDatabase getDatabase() {
         return database;
     }
 
+    /**
+     * Gets profile fragment.
+     *
+     * @return the profile fragment
+     */
     public ProfileFragment getProfileFragment() {
         return profileFragment;
     }
 
+    /**
+     * Gets recycler view fragment.
+     *
+     * @return the recycler view fragment
+     */
     public RecyclerViewFragment getRecyclerViewFragment() {
         return recyclerViewFragment;
     }

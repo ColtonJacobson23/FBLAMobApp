@@ -32,13 +32,27 @@ import java.util.ArrayList;
 /**
  * Created by colto on 1/12/2018.
  */
-
 public class ProfileRecyclerViewFragment extends Fragment {
 
+    /**
+     * The Url.
+     */
     String url = "https://lizardswimmer.azurewebsites.net/simple/books";
+    /**
+     * The Json array.
+     */
     JSONArray jsonArray;
+    /**
+     * The Authors.
+     */
     ArrayList<String> Authors;
+    /**
+     * The Titles.
+     */
     ArrayList<String> Titles;
+    /**
+     * The Isb ns.
+     */
     ArrayList<String> ISBNs;
 
     @Nullable
@@ -95,7 +109,15 @@ public class ProfileRecyclerViewFragment extends Fragment {
         requestQueue.add(stringRequest);
     }
 
-    //To turn a JSON array into Arraylists of Book Data
+    /**
+     * Json to arraylist array list.
+     *
+     * @param jArray the j array
+     * @param name   the name
+     * @return the array list
+     * @throws JSONException the json exception
+     */
+//To turn a JSON array into Arraylists of Book Data
     public ArrayList<String> jsonToArraylist(JSONArray jArray, String name) throws JSONException {
 
         JSONObject jObject = jArray.getJSONObject(0);
@@ -109,6 +131,11 @@ public class ProfileRecyclerViewFragment extends Fragment {
     }
 
 
+    /**
+     * New instance fragment.
+     *
+     * @return the fragment
+     */
     public static Fragment newInstance() {
 
         return new ProfileRecyclerViewFragment();
@@ -123,10 +150,21 @@ public class ProfileRecyclerViewFragment extends Fragment {
         private ImageView mImageView;
         private ItemClickListener itemClickListener;
 
+        /**
+         * Instantiates a new Recycler view holder.
+         *
+         * @param itemView the item view
+         */
         public RecyclerViewHolder(View itemView) {
             super(itemView);
         }
 
+        /**
+         * Instantiates a new Recycler view holder.
+         *
+         * @param layoutInflater the layout inflater
+         * @param container      the container
+         */
         public RecyclerViewHolder(LayoutInflater layoutInflater, ViewGroup container) {
 
             super(layoutInflater.inflate(R.layout.card_view,container,false));
@@ -140,6 +178,11 @@ public class ProfileRecyclerViewFragment extends Fragment {
 
         }
 
+        /**
+         * Sets item click listener.
+         *
+         * @param itemClickListener the item click listener
+         */
         public void setItemClickListener(ItemClickListener itemClickListener) {
 
             this.itemClickListener = itemClickListener;
@@ -163,6 +206,12 @@ public class ProfileRecyclerViewFragment extends Fragment {
         private ArrayList<Book> books;
 
 
+        /**
+         * Instantiates a new Recycler view adapter.
+         *
+         * @param books   the books
+         * @param context the context
+         */
         public RecyclerViewAdapter(ArrayList<Book> books, Context context) {
 
             this.authors = Authors;

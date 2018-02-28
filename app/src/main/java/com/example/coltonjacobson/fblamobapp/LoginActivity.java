@@ -48,7 +48,13 @@ import static android.content.ContentValues.TAG;
  */
 public class LoginActivity extends Activity {
 
+    /**
+     * The Context.
+     */
     Context context;
+    /**
+     * The Post url.
+     */
     String postURL = "https://fblamobileapp.azurewebsites.net/user/login";
 
     private UserLoginTask mAuthTask = null;
@@ -181,6 +187,12 @@ public class LoginActivity extends Activity {
         private final String mEmail;
         private final String mPassword;
 
+        /**
+         * Instantiates a new User login task.
+         *
+         * @param email    the email
+         * @param password the password
+         */
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
@@ -214,7 +226,14 @@ public class LoginActivity extends Activity {
     }
 
 
-    //Sends a push request to the database to authenticate the username and password
+    /**
+     * Authenticate boolean.
+     *
+     * @param USERNAME the username
+     * @param PASSWORD the password
+     * @return the boolean
+     */
+//Sends a push request to the database to authenticate the username and password
     //Returns either a JSONObject with a token verifying the username and password, or returns an empty JSON Object
     public boolean authenticate(final String USERNAME, final String PASSWORD) {
 

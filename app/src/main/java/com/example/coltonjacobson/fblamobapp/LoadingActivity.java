@@ -3,6 +3,9 @@ package com.example.coltonjacobson.fblamobapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+/**
+ * The type Loading activity.
+ */
 public class LoadingActivity extends AppCompatActivity {
 
     @Override

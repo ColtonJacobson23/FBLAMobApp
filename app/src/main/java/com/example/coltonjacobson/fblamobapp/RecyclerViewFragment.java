@@ -47,15 +47,32 @@ import static android.content.ContentValues.TAG;
 /**
  * Created by colto on 1/12/2018.
  */
-
 public class RecyclerViewFragment extends Fragment {
 
+    /**
+     * The Book list.
+     */
     ArrayList<Book> bookList = new ArrayList<>();
+    /**
+     * The Recycler view.
+     */
     RecyclerView recyclerView;
+    /**
+     * The Get url.
+     */
     String getURL = "https://fblamobileapp.azurewebsites.net/simple/books";
+    /**
+     * The User information url.
+     */
     String userInformationURL= "https://fblamobileapp.azurewebsites.net/user/info";
 
+    /**
+     * The Database.
+     */
     AppDatabase database;
+    /**
+     * The Books.
+     */
     ArrayList<Book> books;
 
 
@@ -92,6 +109,11 @@ public class RecyclerViewFragment extends Fragment {
 
     }
 
+    /**
+     * Load data.
+     *
+     * @throws JSONException the json exception
+     */
     public void loadData() throws JSONException{
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, getURL, new Response.Listener<String>() {
@@ -133,6 +155,11 @@ public class RecyclerViewFragment extends Fragment {
 
     }
 
+    /**
+     * Load user information.
+     *
+     * @throws JSONException the json exception
+     */
     public void loadUserInformation() throws JSONException{
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, userInformationURL, new Response.Listener<String>() {
@@ -227,6 +254,11 @@ public class RecyclerViewFragment extends Fragment {
     }
 
 
+    /**
+     * New instance fragment.
+     *
+     * @return the fragment
+     */
     public static Fragment newInstance() {
 
         return new RecyclerViewFragment();
@@ -241,10 +273,21 @@ public class RecyclerViewFragment extends Fragment {
         private ImageView mImageView;
         private ItemClickListener itemClickListener;
 
+        /**
+         * Instantiates a new Recycler view holder.
+         *
+         * @param itemView the item view
+         */
         public RecyclerViewHolder(View itemView) {
             super(itemView);
         }
 
+        /**
+         * Instantiates a new Recycler view holder.
+         *
+         * @param layoutInflater the layout inflater
+         * @param container      the container
+         */
         public RecyclerViewHolder(LayoutInflater layoutInflater, ViewGroup container) {
 
             super(layoutInflater.inflate(R.layout.card_view,container,false));
@@ -258,6 +301,11 @@ public class RecyclerViewFragment extends Fragment {
 
         }
 
+        /**
+         * Sets item click listener.
+         *
+         * @param itemClickListener the item click listener
+         */
         public void setItemClickListener(ItemClickListener itemClickListener) {
 
             this.itemClickListener = itemClickListener;
@@ -278,6 +326,12 @@ public class RecyclerViewFragment extends Fragment {
         private List<Book> books;
 
 
+        /**
+         * Instantiates a new Recycler view adapter.
+         *
+         * @param booklist the booklist
+         * @param context  the context
+         */
         public RecyclerViewAdapter(List<Book> booklist, Context context) {
 
 
@@ -305,6 +359,7 @@ public class RecyclerViewFragment extends Fragment {
             final String bookAuthor = authors.substring(1,authors.length()-1);
             final boolean isCheckedOut = books.get(position).isCheckedOut();
             final boolean isReserved = books.get(position).isReserved();
+            final String imagePath = books.get(position).getImagePath();
 
 
             holder.mBookName.setText(bookTitle);
@@ -316,7 +371,7 @@ public class RecyclerViewFragment extends Fragment {
                 public void onClick(View view, int position, boolean isLongClick) {
 
                     Toast.makeText(cText, "You clicked " + bookTitle,Toast.LENGTH_LONG).show();
-                    openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position);
+                    openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position,imagePath);
 
 
                 }
@@ -330,10 +385,9 @@ public class RecyclerViewFragment extends Fragment {
             return books.size();
         }
 
-        private void openBookDetailActivity(int bookID, String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position) {
+        private void openBookDetailActivity(int bookID, String bookName, int image,String bookAuthor,boolean isCheckedOut, boolean isReserved,int position, String imagePath) {
 
             Intent intent = new Intent(cText, BookDetailActivity.class);
-            writeBase64ToFile(books.get(position).getBase64Encoded(),getContext());
 
             //Get data ready to send
             intent.putExtra("BOOK_NAME", bookName);
@@ -342,6 +396,7 @@ public class RecyclerViewFragment extends Fragment {
             intent.putExtra("BOOK_CHECKEDOUT",isCheckedOut);
             intent.putExtra("BOOK_RESERVED",isReserved);
             intent.putExtra("POSITION",position);
+            intent.putExtra("BOOK_IMAGEPATH",imagePath);
 
 
             //Start my activity
@@ -383,20 +438,25 @@ public class RecyclerViewFragment extends Fragment {
     }
 
 
+    /**
+     * Sets book list.
+     *
+     * @param list the list
+     */
     public void setBookList(ArrayList<Book> list) {
         books = list;
     }
 
 
-    private void writeBase64ToFile(String base64String, Context context) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("base64Text.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(base64String);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
+//    private void writeBase64ToFile(String base64String, Context context) {
+//        try {
+//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("base64Text.txt", Context.MODE_PRIVATE));
+//            outputStreamWriter.write(base64String);
+//            outputStreamWriter.close();
+//        }
+//        catch (IOException e) {
+//            Log.e("Exception", "File write failed: " + e.toString());
+//        }
+//    }
 
 }

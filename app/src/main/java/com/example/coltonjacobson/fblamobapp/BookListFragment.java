@@ -10,8 +10,12 @@ import android.support.v7.app.AppCompatActivity;
 /**
  * Created by colto on 1/12/2018.
  */
-
 public abstract class BookListFragment extends AppCompatActivity {
+    /**
+     * Create fragment fragment.
+     *
+     * @return the fragment
+     */
     protected abstract Fragment createFragment();
 
     @Override

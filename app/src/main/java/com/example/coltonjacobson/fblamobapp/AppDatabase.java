@@ -11,8 +11,13 @@ import android.arch.persistence.room.migration.Migration;
  * Created by 2149292 on 2/24/2018.
  */
 @TypeConverters(AuthorConverter.class)
-@Database(entities = {Book.class}, version = 2)
+@Database(entities = {Book.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
+    /**
+     * Book dao book dao.
+     *
+     * @return the book dao
+     */
     public abstract BookDao bookDao();
 
 

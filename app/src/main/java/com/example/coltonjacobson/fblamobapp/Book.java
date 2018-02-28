@@ -17,7 +17,6 @@ import java.util.ArrayList;
 /**
  * Created by colto on 1/15/2018.
  */
-
 @Entity
 public class Book {
     //Variables are ordered based on their order in the database
@@ -30,9 +29,10 @@ public class Book {
     @ColumnInfo(name = "book_pageCount")
     private int pageCount;
 
-    @ColumnInfo(name = "book_base64Encoded")
+
+    @ColumnInfo(name = "book_imagePath")
     //Founds inside the cover object
-    private String base64Encoded;
+    private String imagePath;
 
     @ColumnInfo(name = "book_authors")
     //Could be more than one author
@@ -54,8 +54,21 @@ public class Book {
     private String ficID;
 
 
-    public Book(int bookID, String title, int pageCount, String base64Encoded, ArrayList<String> authors, String isbn, boolean reserved,
-                boolean checkedOut, String deweyDecimal, String ficID) {
+    /**
+     * Instantiates a new Book.
+     *
+     * @param bookID       the book id
+     * @param title        the title
+     * @param pageCount    the page count
+     * @param authors      the authors
+     * @param isbn         the isbn
+     * @param reserved     the reserved
+     * @param checkedOut   the checked out
+     * @param deweyDecimal the dewey decimal
+     * @param ficID        the fic id
+     */
+    public Book(int bookID, String title, int pageCount, ArrayList<String> authors, String isbn, boolean reserved,
+                boolean checkedOut, String deweyDecimal, String ficID, String imagePath) {
 
         //Filler values to use for empty parameters
         String titleB = "no title";
@@ -66,6 +79,7 @@ public class Book {
         String isbnB = "000-0000000000";
         String deweyDecimalB = "no dewey";
         String ficIDB = "no ficID";
+        this.imagePath = imagePath;
 
         this.bookID = bookID;
 
@@ -94,12 +108,6 @@ public class Book {
             this.isbn = isbn;
         }
 
-         if(base64Encoded == null || base64Encoded.equals("")) {
-            this.base64Encoded = base64EncodedB;
-        } else {
-            this.base64Encoded = base64Encoded;
-        }
-
         if(deweyDecimal == null || deweyDecimal.equals("")) {
             this.deweyDecimal = deweyDecimalB;
         } else {
@@ -123,13 +131,26 @@ public class Book {
     }
 
 
-
+    /**
+     * To bitmap bitmap.
+     *
+     * @param c the c
+     * @param s the s
+     * @return the bitmap
+     */
     public static Bitmap toBitmap(Context c, String s) {
         byte[] rawString = Base64.decode(s, Base64.DEFAULT);
         Bitmap imgDecoded = BitmapFactory.decodeByteArray(rawString,0,rawString.length);
         return imgDecoded;
     }
 
+    /**
+     * Make author list array list.
+     *
+     * @param jArray the j array
+     * @return the array list
+     * @throws JSONException the json exception
+     */
     public static ArrayList<String> makeAuthorList(JSONArray jArray) throws JSONException {
 
         ArrayList<String> arrayList = new ArrayList<String>();
@@ -152,10 +173,19 @@ public class Book {
                 + "\nisbn: " + isbn
                 + "\nReserved: " + reserved
                 + "\nCheckedout: " + checkedOut
-                + "\nB64Encoded: " + base64Encoded
+                + "\nB64Encoded: " + imagePath
                 + "\nficID: " + ficID;
     }
 
+    /**
+     * Make book array list array list.
+     *
+     * @param context   the context
+     * @param jsonArray the json array
+     * @param bookList  the book list
+     * @return the array list
+     * @throws JSONException the json exception
+     */
     public static ArrayList<Book> makeBookArrayList(Context context, JSONArray jsonArray, ArrayList<Book> bookList) throws JSONException {
 
         JSONObject jsonObject;
@@ -168,13 +198,13 @@ public class Book {
                 jsonObject = jsonArray.getJSONObject(i);
                 book = new Book(jsonObject.getInt("bookID"),jsonObject.getString("title"),
                         jsonObject.getInt("pageCount"),
-                        jsonObject.getJSONObject("cover").getString("base64Encoded"),
                         Book.makeAuthorList(jsonObject.getJSONArray("authors")),
                         jsonObject.getString("isbn"),
                         false,
                         false,
                         jsonObject.getString("deweyDecimal"),
-                        jsonObject.getString("ficID"));
+                        jsonObject.getString("ficID"),
+                        jsonObject.getString("imagePath"));
                 bookList.add(book);
             } catch (JSONException e) {
 
@@ -188,83 +218,173 @@ public class Book {
 
     }
 
+    /**
+     * Gets book id.
+     *
+     * @return the book id
+     */
     public int getBookID() {
         return bookID;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param bookID the book id
+     */
     public void setId(int bookID) {
         this.bookID = bookID;
     }
 
+    /**
+     * Sets title.
+     *
+     * @param title the title
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Sets page count.
+     *
+     * @param pageCount the page count
+     */
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
     }
 
-    public void setBase64Encoded(String base64Encoded) {
-        this.base64Encoded = base64Encoded;
-    }
-
+    /**
+     * Sets authors.
+     *
+     * @param authors the authors
+     */
     public void setAuthors(ArrayList<String> authors) {
         this.authors = authors;
     }
 
+    /**
+     * Sets isbn.
+     *
+     * @param isbn the isbn
+     */
     public void setIsbn(String isbn) {
         this.isbn = isbn;
     }
 
+    /**
+     * Sets dewey decimal.
+     *
+     * @param deweyDecimal the dewey decimal
+     */
     public void setDeweyDecimal(String deweyDecimal) {
         this.deweyDecimal = deweyDecimal;
     }
 
+    /**
+     * Sets reserved.
+     *
+     * @param reserved the reserved
+     */
     public void setReserved(boolean reserved) {
         this.reserved = reserved;
     }
 
+    /**
+     * Sets checked out.
+     *
+     * @param checkedOut the checked out
+     */
     public void setCheckedOut(boolean checkedOut) {
         this.checkedOut = checkedOut;
     }
 
+    /**
+     * Sets fic id.
+     *
+     * @param ficID the fic id
+     */
     public void setFicID(String ficID) {
         this.ficID = ficID;
     }
 
+    /**
+     * Gets title.
+     *
+     * @return the title
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Gets page count.
+     *
+     * @return the page count
+     */
     public int getPageCount() {
         return pageCount;
     }
 
-    public String getBase64Encoded() {
-        return base64Encoded;
-    }
-
+    /**
+     * Gets authors.
+     *
+     * @return the authors
+     */
     public ArrayList<String> getAuthors() {
         return authors;
     }
 
+    /**
+     * Gets isbn.
+     *
+     * @return the isbn
+     */
     public String getIsbn() {
         return isbn;
     }
 
+    /**
+     * Gets dewey decimal.
+     *
+     * @return the dewey decimal
+     */
     public String getDeweyDecimal() {
         return deweyDecimal;
     }
 
+    /**
+     * Is reserved boolean.
+     *
+     * @return the boolean
+     */
     public boolean isReserved() {
         return reserved;
     }
 
+    /**
+     * Is checked out boolean.
+     *
+     * @return the boolean
+     */
     public boolean isCheckedOut() {
         return checkedOut;
     }
 
+    /**
+     * Gets fic id.
+     *
+     * @return the fic id
+     */
     public String getFicID() {
         return ficID;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

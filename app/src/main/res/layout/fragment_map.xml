@@ -12,22 +12,70 @@
         android:layout_alignParentTop="true"
         android:background="@drawable/map">
 
+        <!--
+        All main spacers go here
+        Main spaces do bulk formatting and set up the general areas
+        -->
+
 
         <Space
             android:id="@+id/main_space_1"
             android:layout_width="@dimen/mS1_width"
             android:layout_height="@dimen/mS1_height"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true" />
 
         <Space
             android:id="@+id/main_space_2"
             android:layout_width="@dimen/mS2_width"
             android:layout_height="@dimen/mS2_height"
-            android:layout_alignParentRight="true"
-            android:layout_above="@+id/main_space_1">
+            android:layout_above="@+id/main_space_1"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
+
+        <Space
+            android:id="@+id/main_space_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/main_space_2"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true">
+
+        <!--
+        All linear layouts go here
+        Each linear layout wll hold a chunk of the bookshelves
+        The chunks are determined by location, each wall will be a chunk, and middle section of the fiction books will be a larger chunk
+        Individual shelves will contain markings needed to identify the books inside
+        Linear Layouts:
+        Walls:
+        - Wall_1
+        - Wall_2
+        - Wall_3
+        - Wall_4
+        - Wall_5
+        - Wall_6
+
+
+        -->
+
+
 
         </Space>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true">
+
+            <LinearLayout
+                android:layout_width="@dimen/case_width"
+                android:layout_height="@dimen/case_length" />
+        </LinearLayout>
+
+
+
+
 
 
 

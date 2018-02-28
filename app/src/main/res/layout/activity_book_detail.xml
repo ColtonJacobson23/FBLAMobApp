@@ -44,7 +44,7 @@
             android:layout_marginTop="8dp"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/textView_author"
-            app:srcCompat="@drawable/ic_example_image" />
+            android:src="@drawable/mockingjay_image"/>
 
 
         <LinearLayout
