@@ -12,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:text="My Books"
+        android:text="My Checkouts"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <android.support.v7.widget.RecyclerView

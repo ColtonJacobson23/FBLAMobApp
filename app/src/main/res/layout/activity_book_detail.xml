@@ -43,7 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/textView_author"
-            android:textAlignment="center"
+            android:gravity="start"
+            android:layout_margin="4dp"
             android:text="Description"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 

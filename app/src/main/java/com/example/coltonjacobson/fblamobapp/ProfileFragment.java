@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 //import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
 
 import org.json.JSONArray;
@@ -223,8 +224,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             super(layoutInflater.inflate(R.layout.profile_card_view,container,false));
 
             mCardview = itemView.findViewById(R.id.profile_card_view);
-            mBookName = itemView.findViewById(R.id.profile_text_view);
-            mAuthorName =itemView.findViewById(R.id.profile_text_view2);
+//            mBookName = itemView.findViewById(R.id.profile_text_view);
+//            mAuthorName =itemView.findViewById(R.id.profile_text_view2);
             mImageView =itemView.findViewById(R.id.profile_image_view);
             itemView.setOnClickListener(this);
 
@@ -290,9 +291,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             final String description = books.get(position).getDescription();
 
 
-            holder.mBookName.setText(bookTitle);
-            holder.mImageView.setImageResource(bookImage);
-            holder.mAuthorName.setText(bookAuthor);
+//            holder.mBookName.setText(bookTitle);
+//            holder.mImageView.setImageResource(bookImage);
+//            holder.mAuthorName.setText(bookAuthor);
+            Glide.with(getContext()).load("https://fblamobileapp.azurewebsites.net/images/" + imagePath).into(holder.mImageView);
 
             holder.setItemClickListener(new ItemClickListener() {
                 @Override
