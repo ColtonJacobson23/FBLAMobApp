@@ -67,11 +67,11 @@ public class DataLoader {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            try {
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+//            try {
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
 
             return null;
         }
