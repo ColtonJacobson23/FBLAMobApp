@@ -223,7 +223,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         } else {
             button.setText("Check In");
             database.bookDao().setCheckedOut(bookID, false);
-
+            Toast.makeText(this, "You have checked out " + bookTitle + , Toast.LENGTH_LONG).show();
         }
 
     }

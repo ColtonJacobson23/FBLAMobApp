@@ -64,6 +64,8 @@ public interface BookDao {
     @Query("UPDATE book SET book_checkedOut = :chkOut WHERE bookID =:ID")
     void setCheckedOut(int ID, boolean chkOut);
 
+    @Query("UPDATE book SET book_reserved = :reserve WHERE bookID =:ID")
+    void setReserved(int ID, boolean reserve);
 
 
 
