@@ -392,6 +392,7 @@ public class RecyclerViewFragment extends Fragment {
             Intent intent = new Intent(cText, BookDetailActivity.class);
 
             //Get data ready to send
+            intent.putExtra("BOOK_ID",bookID);
             intent.putExtra("BOOK_NAME", bookName);
             intent.putExtra("BOOK_IMAGE", image );
             intent.putExtra("BOOK_AUTHOR",bookAuthor);

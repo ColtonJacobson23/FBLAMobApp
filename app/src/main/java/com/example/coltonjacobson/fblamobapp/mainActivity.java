@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,6 +104,7 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
      */
     MapFragment mapFragment;
 
+
     //Changes the fragment displayed on the screen to the one associated with each button
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -172,6 +174,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
 
 
     }

@@ -1,5 +1,6 @@
 package com.example.coltonjacobson.fblamobapp;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -18,10 +20,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Calendar;
 
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.annotation.GlideExtension;
 import com.bumptech.glide.annotation.GlideModule;
 
@@ -33,11 +41,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.graphics.Bitmap.CompressFormat.PNG;
 import static android.content.ContentValues.TAG;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.Resource;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 //import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
 
@@ -94,12 +108,30 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
      *
      * @param savedInstanceState
      */
+
+    /**
+     * Checkout request URL
+     */
+    String checkoutURL = "https://fblamobileapp.azurewebsites.net/library/checkout";
+
+    /**
+     * Reserve request URL
+     */
+    String reserveURL = "https://fblamobileapp.azurewebsites.net/library/reserve";
     String imagePath;
 
     String description;
 
     TextView descriptionText;
+    Date overdue;
 
+    /**
+     * Book ID
+     * @param savedInstanceState
+     */
+    int bookID;
+
+    String bookTitle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -123,7 +155,8 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
 
         //Obtains data
         Intent intent = this.getIntent();
-        String bookName = intent.getExtras().getString("BOOK_NAME");
+        bookID = intent.getExtras().getInt("BOOK_ID");
+        bookTitle = intent.getExtras().getString("BOOK_NAME");
         String bookAuthor = intent.getExtras().getString("BOOK_AUTHOR");
         int imageID = intent.getExtras().getInt("BOOK_IMAGE");
         boolean isCheckedOut = intent.getExtras().getBoolean("BOOK_CHECKEDOUT");
@@ -132,7 +165,19 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         imagePath = intent.getExtras().getString("BOOK_IMAGEPATH");
         description = intent.getExtras().getString("BOOK_DESCRIPTION");
 
+        database = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "main")
+                .fallbackToDestructiveMigration()
+                .allowMainThreadQueries()
+                .build();
 
+        Calendar calendar = Calendar.getInstance();
+        Date currentTime = calendar.getTime();
+        calendar.setTime(currentTime);
+        calendar.add(Calendar.DATE, 28);
+        overdue = calendar.getTime();
+        calendar.setTime(currentTime);
+        Log.d(TAG, "onCreate: " + currentTime);
+        Log.d(TAG, "onCreate: " + overdue);
 
 
 
@@ -145,7 +190,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
 
 
         //Binds data
-        bookNameText.setText(bookName);
+        bookNameText.setText(bookTitle);
         bookAuthorText.setText(bookAuthor);
         bookImageView.setImageResource(imageID);
         descriptionText.setText(description);
@@ -173,8 +218,12 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         Button button = (Button) view;
         if (button.getText().equals("Check In")) {
             button.setText("Check Out");
+            database.bookDao().setCheckedOut(bookID, true);
+            Toast.makeText(this, "You have checked out " + bookTitle + " for four weeks. It will be due on " + overdue.toString().substring(0,10) + ".", Toast.LENGTH_LONG).show();
         } else {
             button.setText("Check In");
+            database.bookDao().setCheckedOut(bookID, false);
+
         }
 
     }
@@ -207,6 +256,12 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
 
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     * @deprecated
+     */
     private String readBase64File(Context context) {
         String base64String = "";
 
@@ -241,6 +296,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
      * @param fileName The file name.
      * @param bitmap   The Bitmap you want to save.
      * @return true if the Bitmap was saved successfully, false otherwise.
+     * @deprecated
      */
     public boolean saveCoverToFile(String fileName, Bitmap bitmap) {
 
@@ -277,6 +333,61 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         onBackPressed();
 
     }
+
+//    public boolean authenticate(final String USERNAME, final String PASSWORD) {
+//
+//
+//        //Storing username and password in JSONObject
+//        final JSONObject info = new JSONObject();
+//        try {
+//            info.put("username", USERNAME);
+//            info.put("password", PASSWORD);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Toast.makeText(context, "JSON Parse error @ authenticate before request", Toast.LENGTH_SHORT).show();
+//        }
+//
+//
+//        RequestQueue rQueue = Volley.newRequestQueue(this);
+//        //Posting the object containing the username and password
+//        //If correct, a JWT token will be inserted into jResponse
+//        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST,postURL,info,
+//                new Response.Listener<JSONObject>()
+//                {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                            Toast.makeText(context, "JSON ERROR", Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                    }
+//                },
+//                new Response.ErrorListener()
+//                {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.d("Error response", error.toString());
+//                        Toast.makeText(context, "FAILURE", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//        ) {
+//            public Map<String,String> getParams()
+//            {
+//                Map<String,String> parameters = new HashMap<String,String>();
+//                parameters.put("Content-Type", "application/json");
+//                parameters.put("Accept", "application/json");
+//                return parameters;
+//            }
+//
+//        };
+//        rQueue.add(postRequest);
+//
+//        return readTokenFile(getApplicationContext()).length()>10;
+//    }
 
 
 }
