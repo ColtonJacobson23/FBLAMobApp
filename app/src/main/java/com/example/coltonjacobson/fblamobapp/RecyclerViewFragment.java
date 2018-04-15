@@ -1,10 +1,8 @@
 package com.example.coltonjacobson.fblamobapp;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -25,6 +23,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.coltonjacobson.fblamobapp.Database.AppDatabase;
+import com.example.coltonjacobson.fblamobapp.Database.Book;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +35,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

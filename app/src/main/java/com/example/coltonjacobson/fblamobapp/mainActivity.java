@@ -2,9 +2,7 @@ package com.example.coltonjacobson.fblamobapp;
 
 import android.arch.persistence.room.Room;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,34 +11,31 @@ import android.support.v4.app.FragmentManager;
 
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.coltonjacobson.fblamobapp.Database.AppDatabase;
+import com.example.coltonjacobson.fblamobapp.Database.Book;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.channels.AsynchronousChannel;
+import java.text.DateFormat;
+import java.text.Format;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.Calendar;
+import java.util.Date;
 
 import static android.content.ContentValues.TAG;
 import static java.lang.Thread.sleep;
@@ -159,7 +154,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-
 
         try {
             getBookData();

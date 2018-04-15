@@ -258,9 +258,14 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            if (response.get("token") != null) {
-                                writeTokenToFile(response.get("token").toString(),getApplicationContext());
+                        if(response != null) {
+                            if (response.getString("token") != null) {
+                                String token = response.getString("token");
+                                if(token.indexOf(".") == 36) {
+                                    writeTokenToFile(response.get("token").toString(), getApplicationContext());
+                                }
                             }
+                        }
 
 
                         } catch (JSONException e) {
@@ -275,7 +280,7 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("Error response", error.toString());
-                        Toast.makeText(context, "FAILURE", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 }
         ) {
@@ -290,7 +295,7 @@ public class LoginActivity extends Activity {
         };
         rQueue.add(postRequest);
 
-        return readTokenFile(getApplicationContext()).length()>10;
+        return readTokenFile(getApplicationContext()).indexOf(".") == 36;
     }
 
     @Override

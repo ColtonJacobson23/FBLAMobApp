@@ -1,8 +1,8 @@
 package com.example.coltonjacobson.fblamobapp;
 
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,10 +26,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.coltonjacobson.fblamobapp.Database.AppDatabase;
+import com.example.coltonjacobson.fblamobapp.Database.Book;
+import com.example.coltonjacobson.fblamobapp.Database.Checkout;
+import com.example.coltonjacobson.fblamobapp.Database.Reservation;
 //import com.example.coltonjacobson.fblamobapp.bookData.BooksCollection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -37,8 +42,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -72,11 +80,23 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
      */
     ArrayList<Book> books;
 
+    ArrayList<Checkout> myCheckedOut = new ArrayList<Checkout>();
+    ArrayList<Reservation> myReserved = new ArrayList<Reservation>();
+    ArrayList<Book> myReservedBooks = new ArrayList<Book>();
+    ArrayList<Book> myCheckedOutBooks = new ArrayList<Book>();
+    String userinfoURL = "https://fblamobileapp.azurewebsites.net/user/info"; //GET Request
+
+    //Shared preferences file
+    SharedPreferences sharedPref;
+
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile,container,false);
+
+        sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         logoutButton = (Button) view.findViewById(R.id.sign_out_button);
         logoutButton.setOnClickListener(this);
@@ -88,10 +108,24 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         try {
             Thread.sleep(500);
             books = (ArrayList<Book>)database.bookDao().getAllBooks();
+            getUserInfo();
+            for (int i = 0; i < database.checkoutDAO().getAllCheckouts().size(); i++) {
+                List<Checkout> ck = database.checkoutDAO().getAllCheckouts();
+                myCheckedOutBooks.add(database.bookDao().getBookByID(ck.get(i).getBookID()));
+            }
+
+            for (int i = 0; i < database.reservationDAO().getAllReservations().size(); i++) {
+                List<Reservation> re = database.reservationDAO().getAllReservations();
+                myReservedBooks.add(database.bookDao().getBookByID(re.get(i).getBookID()));
+            }
+
+
+
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
 
 
         RecyclerView checkoutsRecyclerView = view.findViewById(R.id.profile_recycler_view);
@@ -99,11 +133,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         //Setting the checkouts adapter
         //Input ArrayList of checkouts in place of books
-        checkoutsRecyclerView.setAdapter(new RecyclerViewAdapter(books,getContext()));
+        checkoutsRecyclerView.setAdapter(new RecyclerViewAdapter(myCheckedOutBooks,getContext()));
 
         //Setting the reservations adapter
         //Input ArrayList of reservations in place of books
-        reservationsRecyclerView.setAdapter(new RecyclerViewAdapter(books, getContext()));
+        reservationsRecyclerView.setAdapter(new RecyclerViewAdapter(myReservedBooks, getContext()));
 
 
         //Creates the manager for a horizontal scrolling view
@@ -165,6 +199,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
@@ -190,6 +225,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
+
         if (view == logoutButton) {
             Toast.makeText(getContext(), "Logout clicked", Toast.LENGTH_SHORT).show();
             logOut();
@@ -224,8 +260,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             super(layoutInflater.inflate(R.layout.profile_card_view,container,false));
 
             mCardview = itemView.findViewById(R.id.profile_card_view);
-//            mBookName = itemView.findViewById(R.id.profile_text_view);
-//            mAuthorName =itemView.findViewById(R.id.profile_text_view2);
             mImageView =itemView.findViewById(R.id.profile_image_view);
             itemView.setOnClickListener(this);
 
@@ -249,6 +283,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             itemClickListener.onClick(view,getAdapterPosition(),false);
 
         }
+
     }
 
     private class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder>{
@@ -290,10 +325,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             final String imagePath = books.get(position).getImagePath();
             final String description = books.get(position).getDescription();
 
-
-//            holder.mBookName.setText(bookTitle);
-//            holder.mImageView.setImageResource(bookImage);
-//            holder.mAuthorName.setText(bookAuthor);
             Glide.with(getContext()).load("https://fblamobileapp.azurewebsites.net/images/" + imagePath).into(holder.mImageView);
 
             holder.setItemClickListener(new ItemClickListener() {
@@ -309,9 +340,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         }
 
+
         @Override
         public int getItemCount() {
-            //Five or more
             return books.size();
         }
 
@@ -322,6 +353,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             Intent intent = new Intent(cText, BookDetailActivity.class);
 
             //Get data ready to send
+            intent.putExtra("BOOK_ID",bookID);
             intent.putExtra("BOOK_NAME", bookName);
             intent.putExtra("BOOK_IMAGE", image );
             intent.putExtra("BOOK_AUTHOR",bookAuthor);
@@ -329,7 +361,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             intent.putExtra("BOOK_IMAGEPATH",imagePath);
             intent.putExtra("BOOK_DESCRIPTION", description);
             intent.putExtra("BOOK_CHECKEDOUT",isCheckedOut);
-            intent.putExtra("BOOK_RESERVED",isCheckedOut);
+            intent.putExtra("BOOK_RESERVED",isReserved);
 
 
             //Start my activity
@@ -504,7 +536,68 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         books = list;
     }
 
+    /**
+     * Gets user data.
+     *
+     * @throws JSONException the json exception
+     */
+//Loads all of the books from the database
+    public void getUserInfo() throws JSONException {
 
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, userinfoURL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                //Attempt to get JSON and parse it to a book ArrayList
+                try {
+
+                    Toast.makeText(getContext(), "First Checkout", Toast.LENGTH_SHORT).show();
+                    JSONObject jsonObject = new JSONObject(response);
+                    myReserved = Reservation.makeReservationList(jsonObject.getJSONArray("reservations"));
+                    myCheckedOut = Checkout.makeCheckoutList(jsonObject.getJSONArray("checkouts"));
+                    for (int i = 0; i < myCheckedOut.size(); i++) {
+                        database.checkoutDAO().insertCheckout(myCheckedOut.get(i));
+                    }
+                    for (int i = 0; i < myReserved.size(); i++) {
+                        database.reservationDAO().insertReservation(myReserved.get(i));
+                    }
+
+
+                } catch (JSONException e) {
+
+                    e.printStackTrace();
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
+
+                    }
+                }) {
+
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Bearer " + readTokenFile(getContext()));
+                //headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                Log.d(TAG, "getHeaders: a" + headers.get("Accept"));
+                Log.d(TAG, "getHeaders: " + headers.get("Authorization"));
+                return headers;
+            }
+
+
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
+    }
 
 
 }
