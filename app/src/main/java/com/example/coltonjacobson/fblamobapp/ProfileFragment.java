@@ -46,8 +46,10 @@ import java.io.OutputStreamWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static android.content.ContentValues.TAG;
 
@@ -112,17 +114,22 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         try {
             Thread.sleep(500);
             books = (ArrayList<Book>)database.bookDao().getAllBooks();
-            for (int i = 0; i < database.checkoutDAO().getAllCheckouts().size(); i++) {
-                List<Checkout> ck = database.checkoutDAO().getAllCheckouts();
+            List<Checkout> ck = database.checkoutDAO().getAllCheckouts();
+            Log.d(TAG, "LIST: cKSize" + ck.size());
+            Log.d(TAG, "LIST: mCSize" + myCheckedOutBooks.size());
+            for(int i = 0; i < ck.size();i++) {
                 myCheckedOutBooks.add(database.bookDao().getBookByID(ck.get(i).getBookID()));
             }
 
+            List<Reservation> re = database.reservationDAO().getAllReservations();
+            HashSet<Reservation> res = new HashSet<Reservation>(re);
+            re.clear();
+            re.addAll(res);
 
-
-            for (int i = 0; i < database.reservationDAO().getAllReservations().size(); i++) {
-                List<Reservation> re = database.reservationDAO().getAllReservations();
+            for(int i = 0; i < re.size();i++) {
                 myReservedBooks.add(database.bookDao().getBookByID(re.get(i).getBookID()));
             }
+
 
 
 
@@ -148,18 +155,21 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             noReservationsText.setHeight(0);
         }
 
-        //Linear Searches GO HERE
-        for(int i = myCheckedOut.size()-2; i >= 0; i--) {
-            if (myCheckedOutBooks.get(i).getBookID() == myCheckedOutBooks.get(i+1).getBookID()) {
-                myCheckedOutBooks.remove(myCheckedOutBooks.get(i+1));
-            }
-        }
-
-        for(int i = myReservedBooks.size()-2; i >= 0; i--) {
-            if (myReservedBooks.get(i).getBookID() == myReservedBooks.get(i+1).getBookID()) {
-                myReservedBooks.remove(myReservedBooks.get(i+1));
-            }
-        }
+//        //Linear Searches GO HERE
+//        for(Book b: myCheckedOutBooks) {
+//
+//        }
+//        for(int i = myCheckedOut.size()-2; i >= 0; i--) {
+//            if (myCheckedOutBooks.get(i).getBookID() == myCheckedOutBooks.get(i+1).getBookID()) {
+//                myCheckedOutBooks.remove(myCheckedOutBooks.get(i+1));
+//            }
+//        }
+//
+//        for(int i = myReservedBooks.size()-2; i >= 0; i--) {
+//            if (myReservedBooks.get(i).getBookID() == myReservedBooks.get(i+1).getBookID()) {
+//                myReservedBooks.remove(myReservedBooks.get(i+1));
+//            }
+//        }
 
 
         //Setting the checkouts adapter

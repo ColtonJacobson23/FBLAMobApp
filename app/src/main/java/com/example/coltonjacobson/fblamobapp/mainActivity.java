@@ -153,6 +153,8 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
+        database.reservationDAO().deleteAll();
+        database.checkoutDAO().deleteAll();
 
         try {
             getBookData();

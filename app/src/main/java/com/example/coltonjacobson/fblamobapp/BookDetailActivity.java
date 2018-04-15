@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -136,6 +138,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
      * @param savedInstanceState
      */
     int bookID;
+    int USERID;
 
     String bookTitle;
 
@@ -164,6 +167,12 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.map_container, fragment, "FragmentName");
         fragmentTransaction.commit();
+
+//        String token = readTokenFile(getApplicationContext());
+//        String[] parts = token.split("\\.");
+//        String body = parts[1];
+//
+//        String json = new String(Base64.decode(body,0));
 
 
         //Obtains data
@@ -247,7 +256,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         if (button.getText().equals("Reserve")) {
             button.setText("Cancel Reserve");
             database.bookDao().setReserved(bookID, true);
-            Toast.makeText(this, "You have reserved " + bookTitle + ". You are in " + (int)bookID/4 + "th place in line for this book.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You have reserved " + bookTitle + ". You are in " + (int)bookID/7 + "th place in line for this book.", Toast.LENGTH_LONG).show();
             database.reservationDAO().insertReservation(new Reservation(2,bookID,currentTime));
 
         } else {
