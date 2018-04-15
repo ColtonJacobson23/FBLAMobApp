@@ -134,7 +134,6 @@ public class RecyclerViewFragment extends Fragment {
                 } catch(JSONException e) {
 
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "loadData @ loadData failed", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -144,7 +143,6 @@ public class RecyclerViewFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Toast.makeText(getContext(), "loadData @ loadData failed", Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -159,86 +157,86 @@ public class RecyclerViewFragment extends Fragment {
      *
      * @throws JSONException the json exception
      */
-    public void loadUserInformation() throws JSONException{
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, userInformationURL, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-                //Attempt to get JSON objects for books checked out and books reserved
-                try {
-
-                    //Getting checkouts, renewals, and reservations
-                    JSONObject jsonObject = new JSONObject(response);
-                    Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getContext(), "Line 145", Toast.LENGTH_SHORT).show();
-
-                    //This is breaking the JSON
-                    JSONArray checkouts = jsonObject.getJSONArray("checkouts");
-
-                    Toast.makeText(getContext(), "Line 147", Toast.LENGTH_SHORT).show();
-                    JSONArray reservations = jsonObject.getJSONArray("reservations");
-
-                    Toast.makeText(getContext(), "Line 149", Toast.LENGTH_SHORT).show();
-
-
-
-                    for (int i = 0; i < checkouts.length(); i++) {
-                        Toast.makeText(getContext(), "Inside checkouts for-loop", Toast.LENGTH_SHORT).show();
-                        Toast.makeText(getContext(), books.get(1).toString(), Toast.LENGTH_SHORT).show();
-                        for (Book b : books) {
-                            if (b.getBookID() == checkouts.getJSONObject(i).getInt("bookID") &&
-                                    checkouts.getJSONObject(i).getBoolean("active")) {
-                                database.bookDao().getBookByTitle(b.getTitle()).setCheckedOut(true);
-                                Toast.makeText(getContext(), "Made checkout active", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                    for (int i = 0; i < reservations.length(); i++) {
-                        for (Book b : books) {
-                            if (b.getBookID() == reservations.getJSONObject(i).getInt("bookID") &&
-                                    reservations.getJSONObject(i).getBoolean("active")) {
-                                database.bookDao().getBookByTitle(b.getTitle()).setReserved(true);
-                            }
-                        }
-                    }
-
-
-            } catch(JSONException e) {
-
-                    e.printStackTrace();
-                    Log.d(TAG, "FINDME: " + e);
-                    Toast.makeText(getContext(), "JSON parse @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
-
-                }
-
-            }
-
-        },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-
-                    Toast.makeText(getContext(), "loadData @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "FINDME: " + error);
-
-                }
-            })
-        {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> header = new HashMap<String,String>();
-                header.put("Content-Type", "application/json");
-                header.put("Authorization", "Bearer " + readTokenFile(getContext()));
-                return header;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(stringRequest);
-
-
-
-    }
+//    public void loadUserInformation() throws JSONException{
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, userInformationURL, new Response.Listener<String>() {
+//
+//            @Override
+//            public void onResponse(String response) {
+//                //Attempt to get JSON objects for books checked out and books reserved
+//                try {
+//
+//                    //Getting checkouts, renewals, and reservations
+//                    JSONObject jsonObject = new JSONObject(response);
+//                    Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getContext(), "Line 145", Toast.LENGTH_SHORT).show();
+//
+//                    //This is breaking the JSON
+//                    JSONArray checkouts = jsonObject.getJSONArray("checkouts");
+//
+//                    Toast.makeText(getContext(), "Line 147", Toast.LENGTH_SHORT).show();
+//                    JSONArray reservations = jsonObject.getJSONArray("reservations");
+//
+//                    Toast.makeText(getContext(), "Line 149", Toast.LENGTH_SHORT).show();
+//
+//
+//
+//                    for (int i = 0; i < checkouts.length(); i++) {
+//                        Toast.makeText(getContext(), "Inside checkouts for-loop", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), books.get(1).toString(), Toast.LENGTH_SHORT).show();
+//                        for (Book b : books) {
+//                            if (b.getBookID() == checkouts.getJSONObject(i).getInt("bookID") &&
+//                                    checkouts.getJSONObject(i).getBoolean("active")) {
+//                                database.bookDao().getBookByTitle(b.getTitle()).setCheckedOut(true);
+//                                Toast.makeText(getContext(), "Made checkout active", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    }
+//                    for (int i = 0; i < reservations.length(); i++) {
+//                        for (Book b : books) {
+//                            if (b.getBookID() == reservations.getJSONObject(i).getInt("bookID") &&
+//                                    reservations.getJSONObject(i).getBoolean("active")) {
+//                                database.bookDao().getBookByTitle(b.getTitle()).setReserved(true);
+//                            }
+//                        }
+//                    }
+//
+//
+//            } catch(JSONException e) {
+//
+//                    e.printStackTrace();
+//                    Log.d(TAG, "FINDME: " + e);
+//                    Toast.makeText(getContext(), "JSON parse @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
+//
+//                }
+//
+//            }
+//
+//        },
+//            new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//
+//                    Toast.makeText(getContext(), "loadData @ loadUserInfo failed", Toast.LENGTH_SHORT).show();
+//                    Log.d(TAG, "FINDME: " + error);
+//
+//                }
+//            })
+//        {
+//            @Override
+//            public Map<String, String> getHeaders() throws AuthFailureError {
+//                Map<String,String> header = new HashMap<String,String>();
+//                header.put("Content-Type", "application/json");
+//                header.put("Authorization", "Bearer " + readTokenFile(getContext()));
+//                return header;
+//            }
+//        };
+//        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+//        requestQueue.add(stringRequest);
+//
+//
+//
+//    }
 
 
     @Override
@@ -369,8 +367,6 @@ public class RecyclerViewFragment extends Fragment {
             holder.setItemClickListener(new ItemClickListener() {
                 @Override
                 public void onClick(View view, int position, boolean isLongClick) {
-
-                    Toast.makeText(cText, "You clicked " + bookTitle,Toast.LENGTH_LONG).show();
                     openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position,imagePath, description);
 
 

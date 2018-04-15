@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -203,7 +202,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                 } catch (JSONException e) {
 
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -213,7 +211,6 @@ public class mainActivity extends BookListFragment implements MapFragment.OnFrag
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Toast.makeText(getApplicationContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
 
                     }
                 });

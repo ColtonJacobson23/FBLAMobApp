@@ -137,6 +137,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             noCheckoutsText.setVisibility(View.VISIBLE);
         } else {
             noCheckoutsText.setVisibility(View.INVISIBLE);
+            noCheckoutsText.setHeight(0);
         }
 
         if (myReservedBooks.size()==0) {
@@ -144,6 +145,20 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             noReservationsText.setVisibility(View.VISIBLE);
         } else {
             noReservationsText.setVisibility(View.INVISIBLE);
+            noReservationsText.setHeight(0);
+        }
+
+        //Linear Searches GO HERE
+        for(int i = myCheckedOut.size()-2; i >= 0; i--) {
+            if (myCheckedOutBooks.get(i).getBookID() == myCheckedOutBooks.get(i+1).getBookID()) {
+                myCheckedOutBooks.remove(myCheckedOutBooks.get(i+1));
+            }
+        }
+
+        for(int i = myReservedBooks.size()-2; i >= 0; i--) {
+            if (myReservedBooks.get(i).getBookID() == myReservedBooks.get(i+1).getBookID()) {
+                myReservedBooks.remove(myReservedBooks.get(i+1));
+            }
         }
 
 
@@ -195,7 +210,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 } catch(JSONException e) {
 
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
+
 
                 }
 
@@ -205,7 +220,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -347,7 +361,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 @Override
                 public void onClick(View view, int position, boolean isLongClick) {
 
-                    Toast.makeText(cText, "You clicked " + bookTitle,Toast.LENGTH_LONG).show();
                     openBookDetailActivity(bookID,bookTitle,bookImage,bookAuthor,isCheckedOut,isReserved,position,imagePath, description);
 
 
