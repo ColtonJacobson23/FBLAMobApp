@@ -13,7 +13,7 @@ import android.arch.persistence.room.TypeConverters;
         Book.class,
         Checkout.class,
         Reservation.class
-        }, version = 5)
+        }, version = 7)
 public abstract class AppDatabase extends RoomDatabase {
     /**
      * Book dao book dao.

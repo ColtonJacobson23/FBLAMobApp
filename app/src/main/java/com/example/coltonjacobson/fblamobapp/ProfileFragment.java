@@ -35,6 +35,7 @@ import com.example.coltonjacobson.fblamobapp.Database.Reservation;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -101,6 +102,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         logoutButton = (Button) view.findViewById(R.id.sign_out_button);
         logoutButton.setOnClickListener(this);
 
+        TextView noCheckoutsText = view.findViewById(R.id.noCheckoutsText);
+        TextView noReservationsText = view.findViewById(R.id.noReservationsText);
+
         //Room Database
         database = ((mainActivity)getActivity()).getDatabase();
         Log.d(TAG, "doInBackground: after Profile frag is declared" );
@@ -108,11 +112,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         try {
             Thread.sleep(500);
             books = (ArrayList<Book>)database.bookDao().getAllBooks();
-            getUserInfo();
             for (int i = 0; i < database.checkoutDAO().getAllCheckouts().size(); i++) {
                 List<Checkout> ck = database.checkoutDAO().getAllCheckouts();
                 myCheckedOutBooks.add(database.bookDao().getBookByID(ck.get(i).getBookID()));
             }
+
+
 
             for (int i = 0; i < database.reservationDAO().getAllReservations().size(); i++) {
                 List<Reservation> re = database.reservationDAO().getAllReservations();
@@ -123,13 +128,24 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
-
 
         RecyclerView checkoutsRecyclerView = view.findViewById(R.id.profile_recycler_view);
         RecyclerView reservationsRecyclerView = view.findViewById(R.id.profile_recycler_view2);
+        if (myCheckedOutBooks.size()==0) {
+            checkoutsRecyclerView.setVisibility(View.INVISIBLE);
+            noCheckoutsText.setVisibility(View.VISIBLE);
+        } else {
+            noCheckoutsText.setVisibility(View.INVISIBLE);
+        }
+
+        if (myReservedBooks.size()==0) {
+            reservationsRecyclerView.setVisibility(View.INVISIBLE);
+            noReservationsText.setVisibility(View.VISIBLE);
+        } else {
+            noReservationsText.setVisibility(View.INVISIBLE);
+        }
+
 
         //Setting the checkouts adapter
         //Input ArrayList of checkouts in place of books
@@ -541,63 +557,63 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
      *
      * @throws JSONException the json exception
      */
-//Loads all of the books from the database
-    public void getUserInfo() throws JSONException {
-
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, userinfoURL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                //Attempt to get JSON and parse it to a book ArrayList
-                try {
-
-                    Toast.makeText(getContext(), "First Checkout", Toast.LENGTH_SHORT).show();
-                    JSONObject jsonObject = new JSONObject(response);
-                    myReserved = Reservation.makeReservationList(jsonObject.getJSONArray("reservations"));
-                    myCheckedOut = Checkout.makeCheckoutList(jsonObject.getJSONArray("checkouts"));
-                    for (int i = 0; i < myCheckedOut.size(); i++) {
-                        database.checkoutDAO().insertCheckout(myCheckedOut.get(i));
-                    }
-                    for (int i = 0; i < myReserved.size(); i++) {
-                        database.reservationDAO().insertReservation(myReserved.get(i));
-                    }
-
-
-                } catch (JSONException e) {
-
-                    e.printStackTrace();
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
-
-                    }
-                }) {
-
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", "Bearer " + readTokenFile(getContext()));
-                //headers.put("Content-Type", "application/json");
-                headers.put("Accept", "application/json");
-                Log.d(TAG, "getHeaders: a" + headers.get("Accept"));
-                Log.d(TAG, "getHeaders: " + headers.get("Authorization"));
-                return headers;
-            }
-
-
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
-        requestQueue.add(stringRequest);
-    }
+////Loads all of the books from the database
+//    public void getUserInfo() throws JSONException {
+//
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, userinfoURL, new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//
+//                //Attempt to get JSON and parse it to a book ArrayList
+//                try {
+//
+//                    Toast.makeText(getContext(), "First Checkout", Toast.LENGTH_SHORT).show();
+//                    JSONObject jsonObject = new JSONObject(response);
+//                    myReserved = Reservation.makeReservationList(jsonObject.getJSONArray("reservations"));
+//                    myCheckedOut = Checkout.makeCheckoutList(jsonObject.getJSONArray("checkouts"));
+//                    for (int i = 0; i < myCheckedOut.size(); i++) {
+//                        database.checkoutDAO().insertCheckout(myCheckedOut.get(i));
+//                    }
+//                    for (int i = 0; i < myReserved.size(); i++) {
+//                        database.reservationDAO().insertReservation(myReserved.get(i));
+//                    }
+//
+//
+//                } catch (JSONException e) {
+//
+//                    e.printStackTrace();
+//
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//
+//                        Toast.makeText(getContext(), "loadData @ DBAccessor failed", Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                }) {
+//
+//            public Map<String, String> getHeaders() {
+//                Map<String, String> headers = new HashMap<String, String>();
+//                headers.put("Authorization", "Bearer " + readTokenFile(getContext()));
+//                //headers.put("Content-Type", "application/json");
+//                headers.put("Accept", "application/json");
+//                Log.d(TAG, "getHeaders: a" + headers.get("Accept"));
+//                Log.d(TAG, "getHeaders: " + headers.get("Authorization"));
+//                return headers;
+//            }
+//
+//
+//        };
+//        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+//        requestQueue.add(stringRequest);
+//    }
 
 
 }

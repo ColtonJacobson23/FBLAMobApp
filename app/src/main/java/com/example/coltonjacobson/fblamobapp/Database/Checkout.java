@@ -21,7 +21,7 @@ import static android.support.constraint.Constraints.TAG;
 @Entity
 public class Checkout{
 
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     public int cID;
 
     @ColumnInfo(name = "userID")
@@ -36,18 +36,13 @@ public class Checkout{
     @ColumnInfo(name = "dueDate")
     private Date dueDate;
 
-    @ColumnInfo(name = "renewals")
-    private int renewals;
 
 
-    public Checkout(int cID, int userID, int bookID, Date checkoutDate, Date dueDate, int renewals) {
-        this.cID = cID;
+    public Checkout( int userID, int bookID, Date checkoutDate, Date dueDate) {
         this.userID = userID;
         this.bookID = bookID;
         this.checkoutDate = checkoutDate;
         this.dueDate = dueDate;
-        this.renewals = renewals;
-
     }
 
 
@@ -87,52 +82,45 @@ public class Checkout{
         this.dueDate = dueDate;
     }
 
-    public int getRenewals() {
-        return renewals;
-    }
 
-    public void setRenewals(int renewals) {
-        this.renewals = renewals;
-    }
+//    public static ArrayList<Checkout> makeCheckoutList(JSONArray jArray) throws JSONException, ParseException {
+//
+//        ArrayList<Checkout> arrayList = new ArrayList<Checkout>();
+//
+//        if (jArray.equals(new JSONArray()) || jArray.equals(null)) {
+//            Log.d(TAG, "makeTransactionList: new array list");
+//
+//            return new ArrayList<Checkout>();
+//        }
+//
+//        for (int i = 0; i < jArray.length();i++)  {
+//            arrayList.add(makeCheckout(jArray.getJSONObject(i)));
+//            Log.d(TAG, "makeTransactionList: formatting array list" + i);
+//        }
+//
+//        return arrayList;
+//    }
 
-    public static ArrayList<Checkout> makeCheckoutList(JSONArray jArray) throws JSONException, ParseException {
-
-        ArrayList<Checkout> arrayList = new ArrayList<Checkout>();
-
-        if (jArray.equals(new JSONArray()) || jArray.equals(null)) {
-            Log.d(TAG, "makeTransactionList: new array list");
-
-            return new ArrayList<Checkout>();
-        }
-
-        for (int i = 0; i < jArray.length();i++)  {
-            arrayList.add(makeCheckout(jArray.getJSONObject(i)));
-            Log.d(TAG, "makeTransactionList: formatting array list" + i);
-        }
-
-        return arrayList;
-    }
-
-    public static Checkout makeCheckout(JSONObject jsonObject) throws JSONException, ParseException {
-        Checkout checkout = new Checkout(jsonObject.getInt("id"),
-                jsonObject.getInt("userID"),
-                jsonObject.getInt("bookID"),
-                storedStringToDate(jsonObject.getString("checkoutDate")),
-                storedStringToDate(jsonObject.getString("dueDate")),
-                jsonObject.getInt("renewals"));
-        return checkout;
-    }
-
-    private static Date storedStringToDate(String s){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        Date date = new Date();
-        try {
-            date = dateFormat.parse(s);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
-    }
+//    public static Checkout makeCheckout(JSONObject jsonObject) throws JSONException, ParseException {
+//        Checkout checkout = new Checkout(jsonObject.getInt("id"),
+//                jsonObject.getInt("userID"),
+//                jsonObject.getInt("bookID"),
+//                storedStringToDate(jsonObject.getString("checkoutDate")),
+//                storedStringToDate(jsonObject.getString("dueDate")),
+//                jsonObject.getInt("renewals"));
+//        return checkout;
+//    }
+//
+//    private static Date storedStringToDate(String s){
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+//        Date date = new Date();
+//        try {
+//            date = dateFormat.parse(s);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return date;
+//    }
 
 
 

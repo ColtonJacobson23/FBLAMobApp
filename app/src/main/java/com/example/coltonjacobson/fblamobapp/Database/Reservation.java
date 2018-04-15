@@ -21,7 +21,7 @@ import static android.support.constraint.Constraints.TAG;
 
 @Entity
 public class Reservation {
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     public int rID;
 
     @ColumnInfo(name = "userID")
@@ -35,8 +35,7 @@ public class Reservation {
 
 
 
-    public Reservation(int rID, int userID, int bookID, Date dateTime) {
-        this.rID = rID;
+    public Reservation( int userID, int bookID, Date dateTime) {
         this.bookID = bookID;
         this.userID = userID;
         this.dateTime = dateTime;
@@ -71,42 +70,42 @@ public class Reservation {
         this.dateTime = dateTime;
     }
 
-    public static ArrayList<Reservation> makeReservationList(JSONArray jArray) throws JSONException, ParseException {
-
-        ArrayList<Reservation> arrayList = new ArrayList<Reservation>();
-
-        if (jArray.equals(new JSONArray()) || jArray.equals(null)) {
-            Log.d(TAG, "makeTransactionList: new array list");
-
-            return new ArrayList<Reservation>();
-        }
-
-        for (int i = 0; i < jArray.length();i++)  {
-            arrayList.add(makeReservation(jArray.getJSONObject(i)));
-            Log.d(TAG, "makeTransactionList: formatting array list" + i);
-        }
-
-        return arrayList;
-    }
-
-    public static Reservation makeReservation(JSONObject jsonObject) throws JSONException, ParseException {
-        Reservation reservation = new Reservation(
-                jsonObject.getInt("id"),
-                jsonObject.getInt("userID"),
-                jsonObject.getInt("bookID"),
-                storedStringToDate(jsonObject.getString("datetime")));
-        return reservation;
-    }
-
-    private static Date storedStringToDate(String s) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-        Date date = null;
-        try {
-            date = dateFormat.parse(s);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return date;
-    }
+//    public static ArrayList<Reservation> makeReservationList(JSONArray jArray) throws JSONException, ParseException {
+//
+//        ArrayList<Reservation> arrayList = new ArrayList<Reservation>();
+//
+//        if (jArray.equals(new JSONArray()) || jArray.equals(null)) {
+//            Log.d(TAG, "makeTransactionList: new array list");
+//
+//            return new ArrayList<Reservation>();
+//        }
+//
+//        for (int i = 0; i < jArray.length();i++)  {
+//            arrayList.add(makeReservation(jArray.getJSONObject(i)));
+//            Log.d(TAG, "makeTransactionList: formatting array list" + i);
+//        }
+//
+//        return arrayList;
+//    }
+//
+//    public static Reservation makeReservation(JSONObject jsonObject) throws JSONException, ParseException {
+//        Reservation reservation = new Reservation(
+//                jsonObject.getInt("id"),
+//                jsonObject.getInt("userID"),
+//                jsonObject.getInt("bookID"),
+//                storedStringToDate(jsonObject.getString("datetime")));
+//        return reservation;
+//    }
+//
+//    private static Date storedStringToDate(String s) {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+//        Date date = null;
+//        try {
+//            date = dateFormat.parse(s);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+//        return date;
+//    }
 
 }

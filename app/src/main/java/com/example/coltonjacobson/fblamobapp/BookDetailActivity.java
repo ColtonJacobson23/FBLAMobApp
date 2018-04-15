@@ -125,6 +125,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
     String description;
 
     TextView descriptionText;
+    Date currentTime;
     Date overdue;
     String userinfoURL = "https://fblamobileapp.azurewebsites.net/user/info"; //GET Request
     Boolean canCheckout;
@@ -179,7 +180,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
 
 
         Calendar calendar = Calendar.getInstance();
-        Date currentTime = calendar.getTime();
+        currentTime = calendar.getTime();
         calendar.setTime(currentTime);
         calendar.add(Calendar.DATE, 28);
         overdue = calendar.getTime();
@@ -222,15 +223,15 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
             button.setText("Check In");
             database.bookDao().setCheckedOut(bookID, true);
             Toast.makeText(this, "You have checked out " + bookTitle + " for four weeks. It will be due on " + overdue.toString().substring(0, 10) + ".", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "BOOLEAN: " + database.bookDao().getBookByID(bookID));
             postBook(bookID, checkoutURL);
+            database.checkoutDAO().insertCheckout(new Checkout(2,bookID,currentTime,overdue));
 
         } else {
             button.setText("Check Out");
             database.bookDao().setCheckedOut(bookID, false);
             Toast.makeText(this, "You have checked in " + bookTitle + ".", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "BOOLEAN: " + database.bookDao().getBookByID(bookID));
             postBook(bookID, checkinURL);
+            database.checkoutDAO().delete(bookID);
         }
 
     }
@@ -243,10 +244,17 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
     public void onReserveClicked(View view) {
 
         Button button = (Button) view;
-        if (button.getText().equals("Cancel Reserve")) {
-            button.setText("Reserve");
-        } else {
+        if (button.getText().equals("Reserve")) {
             button.setText("Cancel Reserve");
+            database.bookDao().setReserved(bookID, true);
+            Toast.makeText(this, "You have reserved " + bookTitle + ". You are in " + (int)bookID/4 + "th place in line for this book.", Toast.LENGTH_LONG).show();
+            database.reservationDAO().insertReservation(new Reservation(2,bookID,currentTime));
+
+        } else {
+            button.setText("Reserve");
+            database.bookDao().setReserved(bookID, false);
+            Toast.makeText(this, "You have cancelled your reserve for " + bookTitle + ".", Toast.LENGTH_LONG).show();
+            database.reservationDAO().delete(bookID);
             //BooksCollection.getBooks().get(position).setReserved(true);
         }
 
@@ -358,11 +366,11 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        try {
-                            Toast.makeText(BookDetailActivity.this, response.getString("msg"), Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        //try {
+                            //Toast.makeText(BookDetailActivity.this, response.getString("msg"), Toast.LENGTH_SHORT).show();
+                        //} catch (JSONException e) {
+                        //    e.printStackTrace();
+                        //}
 
 
                     }
@@ -372,7 +380,6 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
                         Log.d("Error response", error.toString());
-                        Toast.makeText(getApplicationContext(), "FAILURE", Toast.LENGTH_SHORT).show();
                     }
                 }
         ) {

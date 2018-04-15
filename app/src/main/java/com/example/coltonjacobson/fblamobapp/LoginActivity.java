@@ -263,6 +263,8 @@ public class LoginActivity extends Activity {
                                 String token = response.getString("token");
                                 if(token.indexOf(".") == 36) {
                                     writeTokenToFile(response.get("token").toString(), getApplicationContext());
+                                    Toast.makeText(context, token, Toast.LENGTH_SHORT).show();
+                                    Log.d(TAG, "onResponse" + token);
                                 }
                             }
                         }
@@ -294,6 +296,7 @@ public class LoginActivity extends Activity {
 
         };
         rQueue.add(postRequest);
+
 
         return readTokenFile(getApplicationContext()).indexOf(".") == 36;
     }

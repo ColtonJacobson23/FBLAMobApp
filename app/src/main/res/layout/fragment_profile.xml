@@ -15,11 +15,21 @@
         android:text="My Checkouts"
         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
+    <TextView
+    android:id="@+id/noCheckoutsText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/myBooksText"
+        android:visibility="invisible"
+    android:text="You don't have any checkouts right now."
+    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/profile_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/myBooksText">
+        android:layout_below="@id/noCheckoutsText">
     </android.support.v7.widget.RecyclerView>
 
     <TextView
@@ -30,11 +40,21 @@
         android:text="My Reservations"
         android:layout_below="@id/profile_recycler_view"/>
 
+    <TextView
+        android:id="@+id/noReservationsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/myReservationsText"
+        android:text="You don't have any reservations right now."
+        android:visibility="invisible"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/profile_recycler_view2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/myReservationsText">
+        android:layout_below="@id/noReservationsText">
 
     </android.support.v7.widget.RecyclerView>
 
