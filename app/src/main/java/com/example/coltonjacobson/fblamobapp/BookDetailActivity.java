@@ -139,6 +139,8 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
      */
     int bookID;
     int USERID;
+    boolean isReserved;
+    boolean isCheckedOut;
 
     String bookTitle;
 
@@ -181,8 +183,8 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         bookTitle = intent.getExtras().getString("BOOK_NAME");
         String bookAuthor = intent.getExtras().getString("BOOK_AUTHOR");
         int imageID = intent.getExtras().getInt("BOOK_IMAGE");
-        boolean isCheckedOut = database.bookDao().getBookByID(bookID).isCheckedOut();
-        boolean isReserved = database.bookDao().getBookByID(bookID).isReserved();
+        isCheckedOut = database.bookDao().getBookByID(bookID).isCheckedOut();
+        isReserved = database.bookDao().getBookByID(bookID).isReserved();
         position = intent.getExtras().getInt("POSITION");
         imagePath = intent.getExtras().getString("BOOK_IMAGEPATH");
         description = intent.getExtras().getString("BOOK_DESCRIPTION");
@@ -216,6 +218,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
             reserveBtn.setText("Cancel Reserve");
         } else {
             reserveBtn.setText("Reserve");
+
         }
 
     }
@@ -228,7 +231,7 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
     public void onCheckoutClicked(View view) {
 
         Button button = (Button) view;
-        if (button.getText().equals("Check Out")) {
+        if (!isCheckedOut) {
             button.setText("Check In");
             database.bookDao().setCheckedOut(bookID, true);
             Toast.makeText(this, "You have checked out " + bookTitle + " for four weeks. It will be due on " + overdue.toString().substring(0, 10) + ".", Toast.LENGTH_LONG).show();
@@ -253,19 +256,19 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
     public void onReserveClicked(View view) {
 
         Button button = (Button) view;
-        if (button.getText().equals("Reserve")) {
+        if (!isReserved) {
             button.setText("Cancel Reserve");
-            database.bookDao().setCheckedOut(bookID, true);
-            Toast.makeText(this, "You have checked out " + bookTitle + " for four weeks. It will be due on " + overdue.toString().substring(0, 10) + ".", Toast.LENGTH_LONG).show();
+            database.bookDao().setReserved(bookID, true);
+            Toast.makeText(this, "You have reserved " + bookTitle + ". You are currently " + bookID/4 + "th in the queue.", Toast.LENGTH_LONG).show();
 //            postBook(bookID, checkoutURL);
-            database.checkoutDAO().insertCheckout(new Checkout(2,bookID,currentTime,overdue));
+            database.reservationDAO().insertReservation(new Reservation(2,bookID,currentTime));
 
         } else {
-            button.setText("Check Out");
-            database.bookDao().setCheckedOut(bookID, false);
-            Toast.makeText(this, "You have checked in " + bookTitle + ".", Toast.LENGTH_LONG).show();
+            button.setText("Reserve");
+            database.bookDao().setReserved(bookID, false);
+            Toast.makeText(this, "You have cancelled your reservation for " + bookTitle + ".", Toast.LENGTH_LONG).show();
 //            postBook(bookID, checkinURL);
-            database.checkoutDAO().delete(bookID);
+            database.reservationDAO().delete(bookID);
         }
 
     }

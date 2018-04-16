@@ -1,5 +1,6 @@
 package com.example.coltonjacobson.fblamobapp;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -85,12 +86,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     ArrayList<Checkout> myCheckedOut = new ArrayList<Checkout>();
     ArrayList<Reservation> myReserved = new ArrayList<Reservation>();
-    ArrayList<Book> myReservedBooks = new ArrayList<Book>();
-    ArrayList<Book> myCheckedOutBooks = new ArrayList<Book>();
+    ArrayList<Book> myReservedBooks;
+    ArrayList<Book> myCheckedOutBooks;
     String userinfoURL = "https://fblamobileapp.azurewebsites.net/user/info"; //GET Request
 
-    //Shared preferences file
-    SharedPreferences sharedPref;
 
 
 
@@ -99,7 +98,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile,container,false);
 
-        sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 
         logoutButton = (Button) view.findViewById(R.id.sign_out_button);
         logoutButton.setOnClickListener(this);
@@ -108,27 +106,28 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         TextView noReservationsText = view.findViewById(R.id.noReservationsText);
 
         //Room Database
-        database = ((mainActivity)getActivity()).getDatabase();
-        Log.d(TAG, "doInBackground: after Profile frag is declared" );
+        database = Room.databaseBuilder(getContext(),AppDatabase.class, "main")
+                .fallbackToDestructiveMigration()
+                .allowMainThreadQueries()
+                .build();
 
         try {
             Thread.sleep(500);
             books = (ArrayList<Book>)database.bookDao().getAllBooks();
             List<Checkout> ck = database.checkoutDAO().getAllCheckouts();
-            Log.d(TAG, "LIST: cKSize" + ck.size());
-            Log.d(TAG, "LIST: mCSize" + myCheckedOutBooks.size());
+            List<Reservation> re = database.reservationDAO().getAllReservations();
+            myCheckedOutBooks = new ArrayList<Book>();
+            myReservedBooks = new ArrayList<Book>();
+
             for(int i = 0; i < ck.size();i++) {
                 myCheckedOutBooks.add(database.bookDao().getBookByID(ck.get(i).getBookID()));
             }
 
-            List<Reservation> re = database.reservationDAO().getAllReservations();
-            HashSet<Reservation> res = new HashSet<Reservation>(re);
-            re.clear();
-            re.addAll(res);
-
             for(int i = 0; i < re.size();i++) {
                 myReservedBooks.add(database.bookDao().getBookByID(re.get(i).getBookID()));
             }
+
+            myReservedBooks = new ArrayList<Book>();
 
 
 
@@ -139,6 +138,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         RecyclerView checkoutsRecyclerView = view.findViewById(R.id.profile_recycler_view);
         RecyclerView reservationsRecyclerView = view.findViewById(R.id.profile_recycler_view2);
+
         if (myCheckedOutBooks.size()==0) {
             checkoutsRecyclerView.setVisibility(View.INVISIBLE);
             noCheckoutsText.setVisibility(View.VISIBLE);

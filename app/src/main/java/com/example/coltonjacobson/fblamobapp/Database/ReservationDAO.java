@@ -9,7 +9,7 @@ import java.util.List;
 @Dao
 public interface ReservationDAO {
 
-    @Query("SELECT * FROM Reservation ORDER BY dateTime ASC")
+    @Query("SELECT * FROM Reservation")
     List<Reservation> getAllReservations();
 
     @Query("SELECT * FROM Reservation where bookID = :bookID")
