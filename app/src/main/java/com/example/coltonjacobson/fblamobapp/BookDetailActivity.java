@@ -232,14 +232,14 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
             button.setText("Check In");
             database.bookDao().setCheckedOut(bookID, true);
             Toast.makeText(this, "You have checked out " + bookTitle + " for four weeks. It will be due on " + overdue.toString().substring(0, 10) + ".", Toast.LENGTH_LONG).show();
-            postBook(bookID, checkoutURL);
+//            postBook(bookID, checkoutURL);
             database.checkoutDAO().insertCheckout(new Checkout(2,bookID,currentTime,overdue));
 
         } else {
             button.setText("Check Out");
             database.bookDao().setCheckedOut(bookID, false);
             Toast.makeText(this, "You have checked in " + bookTitle + ".", Toast.LENGTH_LONG).show();
-            postBook(bookID, checkinURL);
+//            postBook(bookID, checkinURL);
             database.checkoutDAO().delete(bookID);
         }
 
@@ -255,16 +255,17 @@ public class BookDetailActivity extends AppCompatActivity implements MapFragment
         Button button = (Button) view;
         if (button.getText().equals("Reserve")) {
             button.setText("Cancel Reserve");
-            database.bookDao().setReserved(bookID, true);
-            Toast.makeText(this, "You have reserved " + bookTitle + ". You are in " + (int)bookID/7 + "th place in line for this book.", Toast.LENGTH_LONG).show();
-            database.reservationDAO().insertReservation(new Reservation(2,bookID,currentTime));
+            database.bookDao().setCheckedOut(bookID, true);
+            Toast.makeText(this, "You have checked out " + bookTitle + " for four weeks. It will be due on " + overdue.toString().substring(0, 10) + ".", Toast.LENGTH_LONG).show();
+//            postBook(bookID, checkoutURL);
+            database.checkoutDAO().insertCheckout(new Checkout(2,bookID,currentTime,overdue));
 
         } else {
-            button.setText("Reserve");
-            database.bookDao().setReserved(bookID, false);
-            Toast.makeText(this, "You have cancelled your reserve for " + bookTitle + ".", Toast.LENGTH_LONG).show();
-            database.reservationDAO().delete(bookID);
-            //BooksCollection.getBooks().get(position).setReserved(true);
+            button.setText("Check Out");
+            database.bookDao().setCheckedOut(bookID, false);
+            Toast.makeText(this, "You have checked in " + bookTitle + ".", Toast.LENGTH_LONG).show();
+//            postBook(bookID, checkinURL);
+            database.checkoutDAO().delete(bookID);
         }
 
     }

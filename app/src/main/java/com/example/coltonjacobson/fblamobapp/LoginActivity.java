@@ -156,7 +156,7 @@ public class LoginActivity extends Activity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask.Authenticate();
         }
     }
 
@@ -182,7 +182,7 @@ public class LoginActivity extends Activity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask /*extends AsyncTask<Void, Void, Boolean>*/ {
 
         private final String mEmail;
         private final String mPassword;
@@ -198,152 +198,164 @@ public class LoginActivity extends Activity {
             mPassword = password;
         }
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            return authenticate(mEmail,mPassword);
-
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-
-            if (success) {
+        public void Authenticate() {
+            if (mEmail.equals("1111111") && mPassword.equals("password")) {
                 finish();
                 Intent login = new Intent(LoginActivity.this,mainActivity.class);
                 startActivity(login);
             } else {
+                mAuthTask = null;
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             }
         }
 
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-        }
+//        @Override
+//        protected Boolean doInBackground(Void... params) {
+//
+//            return authenticate(mEmail,mPassword);
+//
+//        }
+//
+//        @Override
+//        protected void onPostExecute(final Boolean success) {
+//            mAuthTask = null;
+//
+//            if (success) {
+//                finish();
+//                Intent login = new Intent(LoginActivity.this,mainActivity.class);
+//                startActivity(login);
+//            } else {
+//                mPasswordView.setError(getString(R.string.error_incorrect_password));
+//                mPasswordView.requestFocus();
+//            }
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            mAuthTask = null;
+//        }
     }
 
-
-    /**
-     * Authenticate boolean.
-     *
-     * @param USERNAME the username
-     * @param PASSWORD the password
-     * @return the boolean
-     */
+//
+//    /**
+//     * Authenticate boolean.
+//     *
+//     * @param USERNAME the username
+//     * @param PASSWORD the password
+//     * @return the boolean
+//     */
 //Sends a push request to the database to authenticate the username and password
     //Returns either a JSONObject with a token verifying the username and password, or returns an empty JSON Object
-    public boolean authenticate(final String USERNAME, final String PASSWORD) {
+//    public boolean authenticate(final String USERNAME, final String PASSWORD) {
 
 
-        //Storing username and password in JSONObject
-        final JSONObject info = new JSONObject();
-        try {
-            info.put("username", USERNAME);
-            info.put("password", PASSWORD);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.d(TAG, "authenticate: JSON Parse error @ authenticate before request");
-        }
-
-
-        RequestQueue rQueue = Volley.newRequestQueue(this);
-        //Posting the object containing the username and password
-        //If correct, a JWT token will be inserted into jResponse
-        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST,postURL,info,
-                new Response.Listener<JSONObject>()
-                {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                        if(response != null) {
-                            if (response.getString("token") != null) {
-                                String token = response.getString("token");
-                                if(token.indexOf(".") == 36) {
-                                    writeTokenToFile(response.get("token").toString(), getApplicationContext());
-                                    Log.d(TAG, "onResponse: " + token);
-                                    Log.d(TAG, "onResponse" + token);
-                                }
-                            }
-                        }
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-
-                        }
-
-                    }
-                },
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("Error response", error.toString());
-                    }
-                }
-        ) {
-            public Map<String,String> getParams()
-            {
-                Map<String,String> parameters = new HashMap<String,String>();
-                parameters.put("Content-Type", "application/json");
-                parameters.put("Accept", "application/json");
-                return parameters;
-            }
-
-        };
-        rQueue.add(postRequest);
-
-
-        return readTokenFile(getApplicationContext()).indexOf(".") == 36;
-    }
-
+//        //Storing username and password in JSONObject
+//        final JSONObject info = new JSONObject();
+//        try {
+//            info.put("username", USERNAME);
+//            info.put("password", PASSWORD);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.d(TAG, "authenticate: JSON Parse error @ authenticate before request");
+//        }
+//
+//
+//        RequestQueue rQueue = Volley.newRequestQueue(this);
+//        //Posting the object containing the username and password
+//        //If correct, a JWT token will be inserted into jResponse
+//        JsonObjectRequest postRequest = new JsonObjectRequest(Request.Method.POST,postURL,info,
+//                new Response.Listener<JSONObject>()
+//                {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                        if(response != null) {
+//                            if (response.getString("token") != null) {
+//                                String token = response.getString("token");
+//                                if(token.indexOf(".") == 36) {
+//                                    writeTokenToFile(response.get("token").toString(), getApplicationContext());
+//                                    Log.d(TAG, "onResponse: " + token);
+//                                    Log.d(TAG, "onResponse" + token);
+//                                }
+//                            }
+//                        }
+//
+//
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//
+//                        }
+//
+//                    }
+//                },
+//                new Response.ErrorListener()
+//                {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.d("Error response", error.toString());
+//                    }
+//                }
+//        ) {
+//            public Map<String,String> getParams()
+//            {
+//                Map<String,String> parameters = new HashMap<String,String>();
+//                parameters.put("Content-Type", "application/json");
+//                parameters.put("Accept", "application/json");
+//                return parameters;
+//            }
+//
+//        };
+//        rQueue.add(postRequest);
+//
+//
+//        return readTokenFile(getApplicationContext()).indexOf(".") == 36;
+//    }
+//
     @Override
     public void onBackPressed() {
 
     }
-
-    private void writeTokenToFile(String token, Context context) {
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("userToken.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(token);
-            outputStreamWriter.close();
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        }
-    }
-
-    private String readTokenFile(Context context) {
-        String token = "";
-
-        try {
-            InputStream inputStream = context.openFileInput("userToken.txt");
-
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
-                    stringBuilder.append(receiveString);
-                }
-
-                inputStream.close();
-                token = stringBuilder.toString();
-            }
-        }
-        catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
-        }
-
-        return token;
-    }
+//
+//    private void writeTokenToFile(String token, Context context) {
+//        try {
+//            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("userToken.txt", Context.MODE_PRIVATE));
+//            outputStreamWriter.write(token);
+//            outputStreamWriter.close();
+//        }
+//        catch (IOException e) {
+//            Log.e("Exception", "File write failed: " + e.toString());
+//        }
+//    }
+//
+//    private String readTokenFile(Context context) {
+//        String token = "";
+//
+//        try {
+//            InputStream inputStream = context.openFileInput("userToken.txt");
+//
+//            if ( inputStream != null ) {
+//                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+//                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+//                String receiveString = "";
+//                StringBuilder stringBuilder = new StringBuilder();
+//
+//                while ( (receiveString = bufferedReader.readLine()) != null ) {
+//                    stringBuilder.append(receiveString);
+//                }
+//
+//                inputStream.close();
+//                token = stringBuilder.toString();
+//            }
+//        }
+//        catch (FileNotFoundException e) {
+//            Log.e("login activity", "File not found: " + e.toString());
+//        } catch (IOException e) {
+//            Log.e("login activity", "Can not read file: " + e.toString());
+//        }
+//
+//        return token;
+//    }
 
 
 }
